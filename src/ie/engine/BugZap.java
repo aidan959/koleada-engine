@@ -244,13 +244,10 @@ public class BugZap extends PApplet{
                 } catch (IllegalStateException e){
                     System.out.println("Thread failed to be added to queue");
                 }
-
                 // sets background
                 background(46, 162, 200);
-                
                 // makes sure the player state inputs match
                 player.takeInputs(frameCount);
-
                 if(frameCount % 60 == 0){
                     flip = !flip;
                     if(flip){
@@ -260,6 +257,7 @@ public class BugZap extends PApplet{
                         enemyBugs.get(0).acceleration.clear();
                     }
                 }
+                
                 // TODO - change this to something that checks if listObjs is > 0
                 // if it is then we draw each using their own element
                 // add something like entity.draw()
