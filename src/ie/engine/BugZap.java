@@ -59,54 +59,14 @@ public class BugZap extends PApplet{
         RUNNING,
         EXIT
     }
-    public void drawPlayer(Player player){
-        player.updateModel();
-        stroke(0, 255, 0);
-        fill(0, 200, 0);
-        ellipse(player.model.points.get(0).x, player.model.points.get(0).y, player.model.radius,  (player.model.radius * 2));
-    }
 
-    public void drawProjectile(Projectile projectile){
-        stroke( 0,255,0);
-        fill(0,200,0);
-        ellipse(projectile.getX(), projectile.getY(), 4, 3);
-    }
 
-    public void drawBug(Bug bug){
-        stroke(255, 0 , 0);
-        fill(200,0, 0);
-        ellipse(bug.getX(), bug.getY(), bug.size, bug.size);
-    }
+
+
     public void drawBugs(List<Bug> bugs){
         for(Bug bug : bugs){
-            drawBug(bug);
+            bug.draw();
         }
-    }
-    public void drawMenu(){
-        
-        for(Menu.MenuObject menuObject : menu.returnMenuObjects()){
-            menuObject.selected = false;
-            if(mouseOver(menuObject.position, (int)menuObject.size.x, (int)menuObject.size.y)){
-                fill(rectHighlight);
-                if(mousePressed){
-                    menuObject.clicked();
-                }
-            } else{
-                fill(rectColor);
-            }
-            stroke(255);
-            rect(menuObject.position.x, menuObject.position.y, menuObject.size.x, menuObject.size.y);
-            fill(0,255,255);
-            textSize(30);
-            text(menuObject.menuText,  menuObject.textStart.x, menuObject.textStart.y , menuObject.textEnd.x, menuObject.textEnd.y) ;
-            
-            
-        }
-        menu.setOutput();
-    }
-    
-    public boolean mouseOver(Coordinate position, int width, int height){
-        return (mouseX >= position.x && mouseX <= position.x + width && mouseY >= position.y && mouseY <= position.y + height);
     }
     public void playerFire(Player player){
         if(projectiles.size() < projectileLimit ){
@@ -133,12 +93,11 @@ public class BugZap extends PApplet{
     ArrayList<Projectile> projectiles = new ArrayList<Projectile>(projectileLimit);
     ArrayList<Projectile> projectiles2remove = new ArrayList<>();
     RandomNumbers randomNumberGen = new RandomNumbers();
-    int frameLoop = 300;
+
     Player player;
     Menu menu;
     GameState state;
-    int rectColor;
-    int rectHighlight;
+
     Physics physics;
     boolean flipper = false;
     boolean debugStats = true;
@@ -149,6 +108,7 @@ public class BugZap extends PApplet{
     BlockingQueue<Runnable> threadQueue;
     Semaphore entityListLock = new Semaphore(1);
     float frameTime;
+    AudioSync audioSync;
     ForkJoinPool forkJoinPool;
     
     public void generateBugLocations(){
@@ -157,7 +117,7 @@ public class BugZap extends PApplet{
         
         // spawns d bugs
         for(int i=0; i< numBugs; i++){
-            enemyBugs.add(new Bug(new Coordinate(randomX[i], tempLocationY[i]), 100, width, height, 1));
+            enemyBugs.add(new Bug(new Coordinate(randomX[i], tempLocationY[i]), 100, 1, this));
         }
     }
 
@@ -167,11 +127,9 @@ public class BugZap extends PApplet{
         Coordinate startBtnCoord = new Coordinate(width / 6f, height/16f);
         Coordinate quitBtnCoord = new Coordinate(width / 6f, buttonSize.y + startBtnCoord.y + height / 6f);
         Coordinate creditBtnCoord  = new Coordinate(width / 6f, buttonSize.y + quitBtnCoord.y + height / 6f);
-    
-        rectColor = color(0);
-        rectHighlight = color(51);
+
         
-        menu = new Menu();
+        menu = new Menu(this);
         menu.createMenuObject(Menu.MenuChoice.START, "Start Game", startBtnCoord, buttonSize);
         menu.createMenuObject(Menu.MenuChoice.QUIT, "Quit Game", quitBtnCoord, buttonSize);
         menu.createMenuObject(Menu.MenuChoice.CREDITS, "Credits", creditBtnCoord, buttonSize);
@@ -180,23 +138,24 @@ public class BugZap extends PApplet{
     // initializes game options
     public void setupGame(){
         // creates our player
-        player = new Player((width/2),(height/2 + height/4), true, 100, width, height, playerSize*10f);
+        player = new Player((width/2),(height/2 + height/4), true, 100, playerSize*10f, this);
+        // adds new object to the list of objects
+        listObjs.add(player);
         
         // generates bugs and random locations
         generateBugLocations();
         
-        // adds new object to the list of objects
-        listObjs.add(player);
+        
         for(Bug bug : enemyBugs){
             listObjs.add(bug);
         }
-
-
+        
         // initializes collision enginer
         koleada = new Koleada(listObjs, entityListLock);
         // passes koleada to physics engine and initializes it
-        physics = new Physics(listObjs, koleada);
-
+        physics = new Physics(listObjs, this, koleada);
+        audioSync = new AudioSync(this);
+        audioSync.play();
         threadQueue = new LinkedBlockingDeque<>(5);
         // MAKE SURE TO INCREASE THIS TO MATCH THE NUMBER OF THREADS
         executor = new ThreadPoolExecutor(2, 2, 1, TimeUnit.MILLISECONDS, threadQueue, new ThreadPoolExecutor.AbortPolicy());
@@ -210,6 +169,10 @@ public class BugZap extends PApplet{
     // TODO check all things in here are being created and recycled before creation
     // ALL USES
     long startTime;
+    float smoothedColor;
+    float currentColor = 46;
+    float constColor = 46;
+
     @Override
     public void draw(){ 
         startTime = System.nanoTime();
@@ -218,7 +181,7 @@ public class BugZap extends PApplet{
             case SPLASH:
                 break;
             case MENU:
-                drawMenu();
+                menu.draw();
                 switch(menu.output){
                     case START:
                         state = GameState.RUNNING;
@@ -236,20 +199,29 @@ public class BugZap extends PApplet{
             
             case RUNNING:
                 
-                try{
-                    if(!threadQueue.offer(koleada))
-                        throw new IllegalStateException("Could not offer collision queue");
-                    if(!threadQueue.offer(physics))
-                        throw new IllegalStateException("Could not offer collision queue");
-                } catch (IllegalStateException e){
-                    System.out.println("Thread failed to be added to queue");
-                }
-
+                // try{
+                //     if(!threadQueue.offer(koleada))
+                //         throw new IllegalStateException("Could not offer collision queue");
+                //     if(!threadQueue.offer(physics))
+                //         throw new IllegalStateException("Could not offer collision queue");
+                // } catch (IllegalStateException e){
+                //     System.out.println("Thread failed to be added to queue");
+                // }
+                koleada.run();
+                physics.run();
                 // sets background
-                background(46, 162, 200);
+                currentColor = lerp(currentColor, constColor, 0.05f );
+
+                if(audioSync.isBeat()){
+                    currentColor = 255;
+                    background(constColor, 162, 200);
+                } else {
+                    background(currentColor, 162, 200);
+
+                }
                 
                 // makes sure the player state inputs match
-                player.takeInputs(frameCount);
+                player.takeInputs();
 
                 if(frameCount % 60 == 0){
                     flip = !flip;
@@ -266,12 +238,13 @@ public class BugZap extends PApplet{
                 // or a rendering engine which takes the entity and draws it to the screen
                 // rendering.draw(entity)
                 // draws le player
-                drawPlayer(player);
+                player.draw();
                 // checks if there are any bugs alive
                 if(!enemyBugs.isEmpty()){
                     drawBugs(enemyBugs);
                 }
                 if(player.fire){
+
                     playerFire(player);
                 }
 
@@ -279,9 +252,9 @@ public class BugZap extends PApplet{
                 for(Projectile projectile : projectiles){
                     
                     if(projectile.remove()){
-                        drawProjectile(projectile);
+                        projectile.draw();
                     } else {
-                        System.out.println("Removed at " + projectile.returnTimeSpawn());
+                        System.out.println("Removed at " + projectile.timeSpawn());
 
                         projectiles2remove.add(projectile);
                     }
@@ -381,7 +354,9 @@ public class BugZap extends PApplet{
             {
                 player.inputHandle.down(InputHandler.inputs.SPACE);
 
-                player.debugPhys();
+                if(debugStats){
+                    player.debugPhys();
+                }
                 System.out.println("SPACE key pressed");
             }
             else if(keyCode == ESC){

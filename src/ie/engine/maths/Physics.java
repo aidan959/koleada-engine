@@ -1,13 +1,9 @@
 package ie.engine.maths;
-
-import java.util.ArrayList;
 import java.util.List;
-
 import ie.engine.maths.Koleada.Collision;
 import ie.engine.objects.*;
-
+import processing.core.PApplet;
 import java.util.concurrent.*;
-import java.lang.Math; 
 
 public class Physics implements Runnable{
 
@@ -17,8 +13,10 @@ public class Physics implements Runnable{
     int frameCount = -1;
     int tick = 0;
     int gameTick = 0;
+    PApplet pa;
     // engine constructor - takes the collision object
-    public Physics(List<Entity> listObjs, Koleada koleada){
+    public Physics(List<Entity> listObjs, PApplet pa, Koleada koleada){
+        this.pa = pa;
         this.listObjs = listObjs;
         tick = 0;
         this.koleada = koleada;
@@ -47,8 +45,8 @@ public class Physics implements Runnable{
                 collision.from.velocity.y = (collision.from.mass * collision.from.velocity.y + collision.to.mass * collision.to.velocity.y)/collision.to.mass + collision.from.mass;
                 // makes sure the object being hit is woken by collision engine
                 collision.to.collision_sleeping = false;
-                collision.to.velocity.x = (float)1.1 * (collision.to.mass * collision.to.velocity.x + collision.from.mass * collision.from.velocity.x)/collision.to.mass + collision.from.mass;
-                collision.to.velocity.y = (float)1.1 * (collision.to.mass * collision.to.velocity.y + collision.from.mass * collision.from.velocity.y)/collision.to.mass + collision.from.mass;
+                collision.to.velocity.x = 1.1f * (collision.to.mass * collision.to.velocity.x + collision.from.mass * collision.from.velocity.x)/collision.to.mass + collision.from.mass;
+                collision.to.velocity.y = 1.1f * (collision.to.mass * collision.to.velocity.y + collision.from.mass * collision.from.velocity.y)/collision.to.mass + collision.from.mass;
                 // flattens out acceleration of object just incase
                 collision.to.acceleration.clear();
                 collision.from.acceleration.clear();
@@ -102,16 +100,16 @@ public class Physics implements Runnable{
                     obj.setX(0);
 
                     obj.velocity.multiply(-0.4f, 0.4f);
-                } else if((obj.getX() >= obj.WIDTH )){
-                    obj.setX(obj.WIDTH);
+                } else if((obj.getX() >= pa.width )){
+                    obj.setX(pa.width);
                     obj.velocity.multiply(-0.4f, 0.4f);
                 }
                 if(obj.getY() <= 0 ){
                     obj.setY(0);
                     obj.velocity.multiply(0.4f, -0.4f);
                 }
-                else if(obj.getY() >= obj.HEIGHT){
-                    obj.setY(obj.HEIGHT);
+                else if(obj.getY() >= pa.height){
+                    obj.setY(pa.height);
                     obj.velocity.multiply(0.4f, -0.4f);
                 }
             }

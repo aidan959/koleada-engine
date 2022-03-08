@@ -1,5 +1,7 @@
 package ie.engine.interaction;
 import ie.engine.maths.Coordinate;
+import processing.core.PApplet;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,9 @@ public class Menu
         QUIT
     }
     public MenuChoice output;
+    public PApplet pa;
+    int rectColor;
+    int rectHighlight;
     public void setOutput(){
         boolean objFound = false;
         for(MenuObject obj : menuItems){
@@ -27,8 +32,11 @@ public class Menu
             output = MenuChoice.UNSELECTED;
         }
     }
-    public Menu(){
+    public Menu(PApplet pa){
         this.menuItems = new ArrayList<>();
+        this.pa = pa;
+        rectColor = pa.color(0);
+        rectHighlight = pa.color(51);
     }
     public MenuObject createMenuObject(MenuChoice option, String menuText, Coordinate position, Coordinate size){
         MenuObject menuObj = new Menu.MenuObject(option, menuText, position, new Coordinate(position.x+size.x, position.y+size.y), size );
@@ -74,5 +82,29 @@ public class Menu
     // returns the object - returned when displaying
     public List<MenuObject> returnMenuObjects(){
         return this.menuItems;
+    }
+    public void draw(){
+        for(Menu.MenuObject menuObject : returnMenuObjects()){
+            menuObject.selected = false;
+            if(mouseOver(menuObject.position, (int)menuObject.size.x, (int)menuObject.size.y)){
+                pa.fill(rectHighlight);
+                if(pa.mousePressed){
+                    menuObject.clicked();
+                }
+            } else{
+                pa.fill(rectColor);
+            }
+            pa.stroke(255);
+            pa.rect(menuObject.position.x, menuObject.position.y, menuObject.size.x, menuObject.size.y);
+            pa.fill(0,255,255);
+            pa.textSize(30);
+            pa.text(menuObject.menuText,  menuObject.textStart.x, menuObject.textStart.y , menuObject.textEnd.x, menuObject.textEnd.y) ;
+            
+            
+        }
+        setOutput();
+    }
+    public boolean mouseOver(Coordinate position, int width, int height){
+        return (pa.mouseX >= position.x && pa.mouseX <= position.x + width && pa.mouseY >= position.y && pa.mouseY <= position.y + height);
     }
 }

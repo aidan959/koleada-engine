@@ -1,6 +1,7 @@
 package ie.engine.objects;
 import java.util.Vector;
 import ie.engine.maths.*;
+import processing.core.PApplet;
 public class Entity
 {
     public float health;
@@ -10,20 +11,16 @@ public class Entity
     public Coordinate acceleration = new Coordinate(0, 0);
     public Coordinate velocity = new Coordinate(0, 0);
     public float mass = 1;
-    public Coordinate screenSize;
-    public int WIDTH;
-    public int HEIGHT;
     public Shape model;
     public HitBox hitbox;
     public boolean collision_sleeping;
     private long timeSpawn;
+    public PApplet pa;
     // set if the object has already been handled by collision detection
     public boolean handled;
-    public Entity(float objX, float objY, float health, int WIDTH, int HEIGHT, float radius ){
+    public Entity(float objX, float objY, float health, float radius, PApplet pa ){
         coordinate = new Coordinate(objX, objY);
-        screenSize = new Coordinate(WIDTH, HEIGHT);
-        this.WIDTH = WIDTH;
-        this.HEIGHT = HEIGHT;
+        this.pa = pa;
         this.health = health;
         timeSpawn = System.nanoTime();
         model = new Circle(this.getCoord(), radius);
@@ -75,12 +72,15 @@ public class Entity
 
     }
     public boolean isTouchingWall(){
-        if((getX() <= 0 )|| (getX() >= screenSize.x) || getY() <= 0 ||  getY() >= screenSize.y){
+        if((getX() <= 0 )|| (getX() >= pa.width) || getY() <= 0 ||  getY() >= pa.height){
             return true;
         }
         return false;
     }
-    public long returnTimeSpawn(){
+    public long timeSpawn(){
         return timeSpawn;
+    }
+    public void draw(){
+
     }
 }
