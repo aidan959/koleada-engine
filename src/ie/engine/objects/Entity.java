@@ -30,14 +30,20 @@ public class Entity
         
         coordinate.x = x;
     }
-    public float getX(){
-        return coordinate.x;
-    }
     public void setY(float y){
         coordinate.y = y;
     }
+    public void setZ(float z){
+        coordinate.z = z;
+    }
+    public float getX(){
+        return coordinate.x;
+    }
     public float getY(){
         return coordinate.y;
+    }
+    public float getZ(){
+        return coordinate.z;
     }
     public Coordinate getCoord(){
         return coordinate;
@@ -49,6 +55,10 @@ public class Entity
     public float moveY(float amount){
         setY(coordinate.y + amount);
         return coordinate.y;
+    }
+    public float moveZ(float amount){
+        setY(coordinate.z + amount);
+        return coordinate.z;
     }
     public void updateModel(){
         this.model.points.set(0, this.getCoord());

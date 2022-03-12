@@ -13,12 +13,11 @@ public class Koleada implements Runnable{
     int tick=0;
     int i,j;
     public Semaphore entityLock;
-    int gameTick=0;
+    int gameTick = 0;
     ArrayList<Collision> collisions = new ArrayList<Collision>();
     public Koleada(List<Entity> list, Semaphore lock){
         detecting = list;
         entityLock = lock;
-        
     }
     public void run(){
         try{

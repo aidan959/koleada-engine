@@ -6,7 +6,9 @@ public class InputHandler{
         RIGHT(1),
         UP(2),
         DOWN(3),
-        SPACE(4);
+        SPACE(4),
+        FRONT(5),
+        BACK(6);
         private final int value;
         private inputs(int  value){
             this.value = value;
