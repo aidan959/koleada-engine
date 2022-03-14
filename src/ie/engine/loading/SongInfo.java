@@ -53,15 +53,17 @@ public class SongInfo{
         if(songLength < firstBeat){
             throw new RuntimeException();
         }
-        int numBeats = (int)(((songLength - firstBeat) / sampleRate )/(bpm / 60 ));
-        int beatGap = (int)(songLength / (long)numBeats);
-        for(int i = 0; i > numBeats; i++ ){
-            if(i % 1 == 0){
-                eventList.push(AudioEventLL.EventType.KICK, beatGap * i);
+        int numBeats = (int)(((songLength - firstBeat) / sampleRate ));
+        numBeats *= (bpm / 60f ) * 4;
+        int beatGap = (int)(songLength / numBeats);
+        for(int i = 0; i < numBeats; i++ ){
+            if(i % 2 == 0){
+                eventList.push(AudioEventLL.EventType.KICK, (beatGap * i) + firstBeat);
             } else {
-                eventList.push(AudioEventLL.EventType.SNARE, beatGap * i);
+                eventList.push(AudioEventLL.EventType.SNARE, (beatGap * i) + firstBeat);
             }
         }
+        System.out.println("printing");
     }
     public void calculate(){
 
@@ -71,7 +73,7 @@ public class SongInfo{
     }
     
     public static void main(String args[]){
-        SongInfo sf = new SongInfo("assets/audio/songs/nrgq.wav", 0, 133);
+        SongInfo sf = new SongInfo("assets/audio/songs/nrgq.wav", 31772, 133);
         sf.autoGenerate();
     }
 }

@@ -25,14 +25,18 @@ public class AudioEventLL {
         head = head.next;
         return tmp;   
     }
+    AudioEvent p;
     public void push(EventType eventType, int frame){
         AudioEvent newItem = new AudioEvent(eventType, frame);
         if(head == null){
             head = newItem;
-            return;
+            
         } else {
-            head.next = newItem;
-            return;
+            p = head;
+            while(p.next != null){
+                p = p.next;
+            }
+            p.next = newItem;
         }
     }
 
