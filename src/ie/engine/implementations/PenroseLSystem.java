@@ -1,5 +1,6 @@
 package ie.engine.implementations;
 
+import ie.engine.maths.Coordinate;
 import processing.core.PApplet;
 
 public class PenroseLSystem extends  LSystem{
@@ -10,7 +11,9 @@ public class PenroseLSystem extends  LSystem{
   String ruleY;
   String ruleZ;
 
-  public PenroseLSystem(PApplet pa) {
+  Coordinate position;
+  Coordinate rotation;
+  public PenroseLSystem(PApplet pa, Coordinate startPos, Coordinate startAngle) {
     super(pa);
     axiom = "[X]++[X]++[X]++[X]++[X]";
     ruleW = "YF++ZF4-XF[-YF4-WF]++";
@@ -19,37 +22,44 @@ public class PenroseLSystem extends  LSystem{
     ruleZ = "--YF++++WF[+ZF++++XF]--XF";
     startLength = 460.0f;
     theta = PApplet.radians(36);  
+    position = startPos;
+    rotation = startAngle;
     reset();
   }
 
-  public void useRule(String r_) {
-    rule = r_;
+  public void useRule(String r) {
+    rule = r;
   }
 
-  public void useAxiom(String a_) {
-    axiom = a_;
+  public void useAxiom(String a) {
+    axiom = a;
   }
 
-  public void useLength(float l_) {
-    startLength = l_;
+  public void useLength(float l) {
+    startLength = l;
   }
 
-  public void useTheta(float t_) {
-    theta = PApplet.radians(t_);
+  public void useTheta(float t) {
+    theta = PApplet.radians(t);
   }
-
+  @Override
   public void reset() {
     production = axiom;
     drawLength = startLength;
     generations = 0;
   }
-
+  @Override
   public int getAge() {
     return generations;
   }
-
+  @Override
   public void render() {
-    pa.translate(pa.width/2, pa.height/2);
+    pa.pushMatrix();
+    pa.translate(position.x, position.y, position.z);
+    pa.rotateX(rotation.x);
+    pa.rotateY(rotation.y);
+    pa.rotateZ(rotation.z);
+
     int pushes = 0;
     int repeats = 1;
     steps += 12;          
@@ -98,8 +108,10 @@ public class PenroseLSystem extends  LSystem{
       pa.popMatrix();
       pushes--;
     }
-  }
+    pa.popMatrix();
 
+  }
+  @Override
   public String iterate(String prod_, String rule_) {
     String newProduction = "";
     for (int i = 0; i < prod_.length(); i++) {

@@ -6,14 +6,18 @@ import java.util.List;
 import processing.core.PApplet;
 import java.util.concurrent.*;
 
+import ie.engine.implementations.AudioEventLL;
+import ie.engine.implementations.PenroseLSystem;
+import ie.engine.implementations.Synchronization;
 import ie.engine.interaction.*;
-
+import ie.engine.loading.SongInfo;
 import ie.engine.maths.*;
 import ie.engine.objects.*;
 
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.Window;
+import java.io.File;
 import java.awt.Frame;
 import processing.awt.PSurfaceAWT;
 
@@ -63,10 +67,9 @@ public class BugZap extends PApplet{
     Window w;
     Player player;
     Menu menu;
-    GameState state;
+    GameState engineState;
 
     Physics physics;
-    boolean flipper = false;
     boolean debugStats = true;
     Koleada koleada;
     ArrayList<Entity> listObjs = new ArrayList<Entity>(maximumObjectIndex);
@@ -78,6 +81,14 @@ public class BugZap extends PApplet{
     AudioSync audioSync;
     ForkJoinPool forkJoinPool;
     com.jogamp.newt.opengl.GLWindow win;
+    PenroseLSystem ds;
+    PenroseLSystem ds1;
+
+    // used to hold threads until all threads are completed
+    public Synchronization threadSyncer;
+
+    // holds the song information
+    SongInfo songInfo;
 
     public void generateBugLocations(){
         float[] randomX = randomNumberGen.generateUniqueSet(0, width, numBugs, this);
@@ -117,23 +128,38 @@ public class BugZap extends PApplet{
         }
         
         // initializes collision enginer
-        koleada = new Koleada(listObjs, entityListLock);
+        koleada = new Koleada(listObjs);
         // passes koleada to physics engine and initializes it
         physics = new Physics(listObjs, this, koleada);
-        audioSync = new AudioSync(this);
+        String songName = "assets/audio/songs/nrgq.wav"; 
+        audioSync = new AudioSync(this, songName);
         audioSync.play();
+        songInfo = new SongInfo(songName);
+        tempEvent = songInfo.eventList.blank;
         threadQueue = new LinkedBlockingDeque<>(5);
         // MAKE SURE TO INCREASE THIS TO MATCH THE NUMBER OF THREADS
         executor = new ThreadPoolExecutor(2, 2, 1, TimeUnit.MILLISECONDS, threadQueue, new ThreadPoolExecutor.AbortPolicy());
         executor.prestartAllCoreThreads();
         frameCount = 0;
-        win = ((com.jogamp.newt.opengl.GLWindow) getSurface().getNative());
+        win = (com.jogamp.newt.opengl.GLWindow) getSurface().getNative();
         win.setPointerVisible(false);
         try {
             rub = new Robot();
         } catch(AWTException e){
             exit();
         }
+        // takes collision and psychics engine objects
+        threadSyncer = new Synchronization(List.of(koleada, physics));
+        // important
+        koleada.entityLock = threadSyncer;
+        physics.entityLock = threadSyncer;
+        // used to generate items
+        ds = new PenroseLSystem(this, new Coordinate(width/2/3, height/2, -100), new Coordinate(0, radians(-30f), 0));
+        ds1 = new PenroseLSystem(this, new Coordinate(width/3, height/2, -100), new Coordinate(0, radians(30f), 0));
+
+        ds.simulate(5);
+        ds1.simulate(5);
+
     }
     public void quitGame(){
         beginCamera();
@@ -148,17 +174,19 @@ public class BugZap extends PApplet{
         physics = null;
         audioSync.song.stop();
         audioSync = null;
+        threadSyncer = null;
         threadQueue = null;
         executor.shutdown();
         executor = null;
         win = null;
         player = null;
-
+        ds = null;
     }
     @Override
     public void setup(){
-        state = GameState.MENU;
+        engineState = GameState.MENU;
     }
+    
     // TODO check all things in here are being created and recycled before creation
     // ALL USES
     long startTime;
@@ -166,31 +194,34 @@ public class BugZap extends PApplet{
     float currentColor = 46;
     float constColor = 46;
     float currentSize;
+    float lastVolume;
+    AudioEventLL.AudioEvent tempEvent;
     boolean menuCreated = false;
-    boolean cleanGame = false;
+    boolean doCleanGame = false;
+    Boolean wasBeat = false;
     @Override
     public void draw(){ 
         startTime = System.nanoTime();
         clear();
-        switch (state){
+        switch (engineState){
             case SPLASH:
                 break;
             case MENU:
-                if(cleanGame){
+                if(doCleanGame){
                     quitGame();
-                    cleanGame = false;
+                    doCleanGame = false;
                 }else{
                 if(menuCreated){
                     menu.draw();
                     switch(menu.output){
                         case START:
-                            state = GameState.RUNNING;
+                            engineState = GameState.RUNNING;
                             setupGame();
                             menuCreated = false;
                             menu = null;
                             break;
                         case QUIT:
-                            state = GameState.EXIT;
+                            engineState = GameState.EXIT;
                             menuCreated = false;
                             break;
                         case CREDITS:
@@ -206,7 +237,7 @@ public class BugZap extends PApplet{
                 break;
             
             case RUNNING:
-                
+                threadSyncer.newFrame();
                 try{
                     if(!threadQueue.offer(koleada))
                         throw new IllegalStateException("Could not offer collision queue");
@@ -214,23 +245,24 @@ public class BugZap extends PApplet{
                         throw new IllegalStateException("Could not offer collision queue");
                 } catch (IllegalStateException e){
                     System.out.println("Thread failed to be added to queue");
+                    exit();
                 }
-                // koleada.run();
-                // physics.run();
 
                 beginCamera();
-                rotateX(-player.viewAngle.p);
-                rotateY(player.viewAngle.y);
-                rotateZ(player.viewAngle.r);
+                // rotateX(-player.viewAngle.p);
+                // rotateY(player.viewAngle.y);
+                // rotateZ(player.viewAngle.r);
                 pushMatrix();
-                translate(player.getX(),player.getY()  , player.getZ());
+                // translate(player.getX(),player.getY() , player.getZ());
                 camera();
                 popMatrix();
                 
                 endCamera();
                 // sets background
                 currentColor = lerp(currentColor, constColor, 0.05f );
-                if(audioSync.isBeat()){
+                tempEvent = audioSync.isBeat();
+                wasBeat = audioSync.wasBeat;
+                if(wasBeat){
                     currentColor = 255;
                     background(constColor, 20, 20);
                     directionalLight(constColor, 162, 200, -1, 0, 0);
@@ -261,11 +293,17 @@ public class BugZap extends PApplet{
                     popMatrix();
                 }
                 //camera(, player.getY() -player.viewAngle.y *5f, , player.getY(), player.getZ(), 0.0f, 1.0f, 0.0f);
-                currentSize = lerp(currentSize, 50 + audioSync.magnitude*100, 0.1f );
-                
+                currentSize = lerp(currentSize, 50 + tempEvent.volume*100, 0.1f );
+                pushMatrix();
+                translate(0, 0,100);
+                for(int i = 0; i < 20; i++){
+                    box(15);
+                    translate(20, frameCount/100f, 0);
+                }
+                popMatrix();
                 // makes sure the player state inputs match
                 player.takeInputs();
-
+                /*
                 // if(frameCount % 60 == 0){
                 //     flip = !flip;
                 //     if(flip){
@@ -281,7 +319,10 @@ public class BugZap extends PApplet{
                 // or a rendering engine which takes the entity and draws it to the screen
                 // rendering.draw(entity)
                 // draws le player
-                player.draw();
+                for(Entity object : listObjs){
+                    object.draw();
+                }
+                
                 // // checks if there are any bugs alive
                 // if(!enemyBugs.isEmpty()){
                 //     drawBugs(enemyBugs);
@@ -311,8 +352,11 @@ public class BugZap extends PApplet{
                 // checks if its were debugging
                 // HUD to display text 
                 // ALL THINGS RENDERED IN HERE RENDER ON TOP
+                */
                 camera();
                 noLights();
+                ds.render();
+                ds1.render();
                 hint(DISABLE_DEPTH_TEST); 
                 if(debugStats){
                     fill(200);
@@ -322,15 +366,9 @@ public class BugZap extends PApplet{
                     text("frame time: " + frameTime + "ms" , 5, 10);  // Text wraps within text box
                     
                 }
-                try{
-                    entityListLock.acquire();
-                }
-                catch(InterruptedException exc){
-                    System.out.println(exc);
-                    Thread.currentThread().interrupt();
+                while(!threadSyncer.isFree()){
 
                 }
-                entityListLock.release();
                 break;
             case EXIT:
                 exit();
@@ -380,7 +418,7 @@ public class BugZap extends PApplet{
     float flSensitivity = 0.001f;
     @Override
     public void mouseMoved(){
-        if(state == GameState.RUNNING){
+        if(engineState == GameState.RUNNING){
             player.viewAngle.p += (mouseY - height/2f) * flSensitivity;
             player.viewAngle.y += (mouseX - width/2f) * flSensitivity;
             player.viewAngle.r = 0;
@@ -392,7 +430,7 @@ public class BugZap extends PApplet{
     @Override
     public void keyPressed()
 	{
-        if(state == GameState.RUNNING){
+        if(engineState == GameState.RUNNING){
             // this looks complicated - its basically just a more readable way of
             // checking what button is down
             if (keyCode == LEFT || key == 'a')
@@ -433,8 +471,8 @@ public class BugZap extends PApplet{
             }
             else if(keyCode == ESC){
                 key = 0;
-                cleanGame = true;
-                state = GameState.MENU;
+                doCleanGame = true;
+                engineState = GameState.MENU;
             } else if(key == '0'){
                 audioSync.song.jumpFrame((int)AudioSync.songParts.INTRO.get());
             }
@@ -444,7 +482,7 @@ public class BugZap extends PApplet{
         }
 	}
     public void keyReleased(){
-        if(state == GameState.RUNNING){
+        if(engineState == GameState.RUNNING){
             if (keyCode == LEFT || key == 'a')
             {
                 player.inputHandle.up(InputHandler.inputs.LEFT);

@@ -1,13 +1,26 @@
 package ie.engine.loading;
 
+import javax.management.RuntimeErrorException;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static java.nio.file.StandardCopyOption.*;
 
 import ie.engine.implementations.AudioEventLL;
+import ie.engine.implementations.AudioEventLL.EventType;
 
 public class SongInfo{
     public float bpm;
@@ -20,14 +33,18 @@ public class SongInfo{
         this.firstBeat = firstBeat;
         this.songLength = songLength;
         this.sampleRate = sampleRate;
+        eventList = new AudioEventLL();
     }
 
     public String songFile;
-    public SongInfo(String songFile, int firstBeat, float bpm){
+    public String analysisFile;
+    public String backupAnalysisFile;
+
+    public SongInfo(String songFile){
         this.songFile = songFile;
-        this.bpm = bpm;
+        analysisFile = songFile + ".anl";
+        backupAnalysisFile =  analysisFile + ".bk";
         eventList = new AudioEventLL();
-        this.firstBeat = firstBeat;
         AudioInputStream song;
         try{
             song = AudioSystem.getAudioInputStream(new File(songFile));
@@ -37,6 +54,17 @@ public class SongInfo{
         } catch(UnsupportedAudioFileException e){
             throw new RuntimeException("File is unsupported");
         }
+        if(!analysisFileExists()){
+            try{
+                autoGenerate();
+            } catch (Exception e){
+                System.out.println("Python file failed to generate - checking now for backup file");
+                if(backupFileExists()){
+                        revertToBackup();
+                }
+            }
+        }
+        loadFromFile();
         if((int)song.getFormat().getSampleRate() == song.getFormat().getSampleRate()){
             sampleRate = (int)song.getFormat().getSampleRate() ;
             songLength = song.getFrameLength();
@@ -44,36 +72,85 @@ public class SongInfo{
             throw new RuntimeException("Irregular sampleRate");
         }
     }
+    public boolean analysisFileExists(){
+        File f = new File(analysisFile);
+        return f.exists();
+    }
+    public boolean backupFileExists(){
+        File f = new File(backupAnalysisFile);
+        return f.exists();
+    }
+    public boolean songFileExists(){
+        File f = new File(songFile);
+        return f.exists();
+    }
+    public void revertToBackup(){
+        if(backupFileExists()){
+            try{
+                InputStream backupStream =new FileInputStream(new File(backupAnalysisFile));
+                Path newFile = Paths.get(analysisFile);
+                System.out.println("Reverting to backup file.");
+                Files.copy(backupStream, newFile, REPLACE_EXISTING);
+
+            } catch (FileNotFoundException e){
+                System.err.println("File " + backupAnalysisFile +" not found.");
+                
+                throw new RuntimeException(e);
+            } catch(IOException e){
+                System.err.println("Failed to copy " + backupAnalysisFile + " to "+ analysisFile +" not found.");
+
+                throw new RuntimeException(e);
+                
+            }
+        } else {
+            throw new RuntimeException("No backup file");
+        }
+    }
     // public SongInfo(String songFile, int firstBeat){
     //     this.songFile = songFile;
     //     eventList = new AudioEventLL();
     //     this.firstBeat = firstBeat;
     // }
-    public void autoGenerate(){
-        if(songLength < firstBeat){
-            throw new RuntimeException();
+    public String pythonPathify(String fileName){
+        return "src/python/" + fileName;
+    }
+    public boolean autoGenerate() throws Exception{
+        ProcessBuilder processBuilder = new ProcessBuilder("python", pythonPathify("beatdetection.py"), songFile, analysisFile, backupAnalysisFile);
+        processBuilder.redirectErrorStream(true);
+
+        Process process = processBuilder.start();
+        BufferedReader n = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line;
+        while ((line = reader.readLine()) != null)
+            System.out.println("tasklist: " + line);
+        process.waitFor();
+        int exitVal = process.exitValue();
+        if(process.exitValue() == 1){
+            throw new RuntimeException("f");
+        } else if(process.exitValue() == 100){
+            return true;
         }
-        int numBeats = (int)(((songLength - firstBeat) / sampleRate ));
-        numBeats *= (bpm / 60f ) * 4;
-        int beatGap = (int)(songLength / numBeats);
-        for(int i = 0; i < numBeats; i++ ){
-            if(i % 2 == 0){
-                eventList.push(AudioEventLL.EventType.KICK, (beatGap * i) + firstBeat);
-            } else {
-                eventList.push(AudioEventLL.EventType.SNARE, (beatGap * i) + firstBeat);
-            }
-        }
-        System.out.println("printing");
+        return false;
     }
     public void calculate(){
 
     }
     public void loadFromFile(){
-
+        String[] lines; 
+        try (BufferedReader br = new BufferedReader(new FileReader(songFile+".anl"))) {
+            String a;
+            while ( (a = br.readLine()) != null) {
+                lines = a.split("\t");
+                eventList.push(EventType.KICK, Integer.parseInt(lines[0]), Float.parseFloat(lines[1]));
+            }
+        } catch(IOException e){
+            throw new RuntimeException("a");
+        }
     }
     
     public static void main(String args[]){
-        SongInfo sf = new SongInfo("assets/audio/songs/nrgq.wav", 31772, 133);
-        sf.autoGenerate();
+        SongInfo sf = new SongInfo("assets/audio/songs/nrgq.wav");
+        
     }
 }

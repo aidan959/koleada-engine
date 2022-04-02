@@ -1,5 +1,7 @@
 package ie.engine.maths;
 import java.util.List;
+
+import ie.engine.implementations.Synchronization;
 import ie.engine.maths.Koleada.Collision;
 import ie.engine.objects.*;
 import processing.core.PApplet;
@@ -9,7 +11,7 @@ public class Physics implements Runnable{
 
     List<Entity> listObjs;
 
-    public Semaphore entityLock;
+    public Synchronization entityLock;
     int frameCount = -1;
     int tick = 0;
     int gameTick = 0;
@@ -20,7 +22,6 @@ public class Physics implements Runnable{
         this.listObjs = listObjs;
         tick = 0;
         this.koleada = koleada;
-        entityLock = koleada.entityLock;
     }
     public Coordinate gravity = new Coordinate(0f, 9.8f);
     public Koleada koleada;
@@ -56,9 +57,6 @@ public class Physics implements Runnable{
                 collision.from.acceleration.clear();
             }
         }
-        try{
-            // checks if we can proceed with calculations for thread synchronization
-            entityLock.acquire();
         
         for(Entity obj : listObjs){
             // checks if the object is sleeping
@@ -153,12 +151,6 @@ public class Physics implements Runnable{
             }
             obj.moveCoord(obj.velocity);
         }
-        } 
-        catch(InterruptedException exc){
-            System.err.println(exc);
-            Thread.currentThread().interrupt();
-
-        }
-        entityLock.release();
+        entityLock.workComplete(this);
     }
 }

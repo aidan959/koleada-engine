@@ -7,13 +7,19 @@ public class AudioEventLL {
     public enum EventType{
         KICK, SNARE
     };
+    public AudioEventLL(){
+        blank = new AudioEvent(EventType.KICK, 0, 0);
+    }
+    public AudioEvent blank;
     public class AudioEvent{
         AudioEvent next;
         EventType eventType;
-        int frame;
-        AudioEvent(EventType eT, int frame){
+        public int frame;
+        public float volume;
+        public AudioEvent(EventType eT, int frame, float volume){
             eventType = eT;
             this.frame = frame;
+            this.volume = volume;
         }
     }
     AudioEvent head; 
@@ -25,9 +31,12 @@ public class AudioEventLL {
         head = head.next;
         return tmp;   
     }
+    public AudioEvent peek(){
+        return head;
+    }
     AudioEvent p;
-    public void push(EventType eventType, int frame){
-        AudioEvent newItem = new AudioEvent(eventType, frame);
+    public void push(EventType eventType, int frame, float volume){
+        AudioEvent newItem = new AudioEvent(eventType, frame, volume);
         if(head == null){
             head = newItem;
             
