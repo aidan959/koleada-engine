@@ -12,6 +12,7 @@ public class AudioSync {
     Waveform bd;
     int samples = 50;
     int timeToDie = 30;
+
     public SongInfo songInfo;
     public float magnitude;
     public enum songParts{
@@ -40,16 +41,21 @@ public class AudioSync {
     }
     public AudioEvent lastEvent;
     public boolean wasBeat;
+    public int missedFrameCounter;
+
     public AudioEvent isBeat(){
         this.wasBeat = false;
-        if(songInfo.eventList.peek().frame < song.positionFrame()){
-            while(songInfo.eventList.peek().frame < song.positionFrame() ){
-                lastEvent = songInfo.eventList.pop();
-                // audioSync.updateMagnitude();
-                this.wasBeat = true;
-            }
-        } else {
-            lastEvent = null;
+        missedFrameCounter = -1;
+        if(songInfo.eventList.peek().frame > song.positionFrame()){
+            // returns this blank value
+            return songInfo.eventList.blank;
+        }
+        // otherwise it gets updated
+        while(songInfo.eventList.peek().frame < song.positionFrame() ){
+            missedFrameCounter++;
+            lastEvent = songInfo.eventList.pop();
+            // audioSync.updateMagnitude();
+            this.wasBeat = true;
         }
         
         return lastEvent;

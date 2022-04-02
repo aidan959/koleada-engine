@@ -21,15 +21,17 @@ public class NewScene  extends PApplet{
         audioSync.play();
         songInfo = new SongInfo(songName);
     }
+    float lerpValue;
     public void draw(){
+        clear();
         camera();
         tempEvent = audioSync.isBeat();
         wasBeat = audioSync.wasBeat;
-        // never use tempEvent outside of a if(wasBeat) - it will be null otherwise
-        // may remove wasbeat and just check if tempEvent == null?? maybe
+        background(0,0,tempEvent.volume*600);
         if(wasBeat){
             System.out.println("Beat " + tempEvent.frame + " of volume: " + tempEvent.volume);
         } else {
+            //System.out.println("SHOULD BE BLANK Beat " + tempEvent.frame + " of volume: " + tempEvent.volume);
 
         }
         rect(0, 0, 100, 100);

@@ -10,7 +10,7 @@ public class AudioEventLL {
     public AudioEventLL(){
         blank = new AudioEvent(EventType.KICK, 0, 0);
     }
-    public AudioEvent blank;
+    public AudioEvent blank = new AudioEvent(EventType.KICK, 0, 0.0f);
     public class AudioEvent{
         AudioEvent next;
         EventType eventType;

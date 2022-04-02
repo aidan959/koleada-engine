@@ -115,7 +115,7 @@ public class SongInfo{
         return "src/python/" + fileName;
     }
     public boolean autoGenerate() throws Exception{
-        ProcessBuilder processBuilder = new ProcessBuilder("python", pythonPathify("beatdetection.py"), songFile, analysisFile, backupAnalysisFile);
+        ProcessBuilder processBuilder = new ProcessBuilder("python", pythonPathify("beatdetection.py"), songFile, ".anl", ".anl.bk");
         processBuilder.redirectErrorStream(true);
 
         Process process = processBuilder.start();
@@ -138,7 +138,7 @@ public class SongInfo{
     }
     public void loadFromFile(){
         String[] lines; 
-        try (BufferedReader br = new BufferedReader(new FileReader(songFile+".anl"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(analysisFile))) {
             String a;
             while ( (a = br.readLine()) != null) {
                 lines = a.split("\t");

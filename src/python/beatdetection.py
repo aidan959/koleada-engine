@@ -9,12 +9,12 @@ if(len(sys.argv) < 4):
     # indicate failure
     sys.exit(1)
 
-if __name__ == "__main__":
-    print("sick")
+#if __name__ == "__main__":
+    #print("sick")
 
 filename = sys.argv[1]
-analysis_file = sys.argv[2]
-analysis_bkup_file = sys.argv[3]
+analysis_file = filename + sys.argv[2]
+analysis_bkup_file = analysis_file + sys.argv[3]
 
 samplerate = 0
 
