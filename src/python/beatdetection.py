@@ -1,8 +1,10 @@
 from random import sample
-import sys
-from aubio import source, onset, level_lin, fvec
+from numpy import median, diff
 
-win_s = 512                 # fft size
+import sys
+from aubio import source, tempo, fvec
+
+win_s = 1024                 # fft size
 hop_s = win_s // 2          # hop size
 
 if(len(sys.argv) < 4):
@@ -21,9 +23,7 @@ samplerate = 0
 s = source(filename, samplerate, hop_s)
 samplerate = s.samplerate
 
-o = onset("energy", win_s, hop_s, samplerate)
-o.set_silence(-90)
-o.set_threshold(0.3)
+o = tempo("specdiff", win_s, hop_s, samplerate)
 onsets = []
 volume = []
 total_frames = 0
@@ -43,7 +43,18 @@ while True:
         break
 from os.path import exists
 import shutil
+# def beats_to_bpm(beats, path):
+#         # if enough beats are found, convert to periods then to bpm
+#         if len(beats) > 1:
+#             if len(beats) < 4:
+#                 print("few beats found in {:s}".format(path))
+#             bpms = 60./diff(beats)
+#             return median(bpms)
+#         else:
+#             print("not enough beats found in {:s}".format(path))
+#             return 0
 
+# print(beats_to_bpm(onsets, "nrgq"))
 file_exists = exists(analysis_file)
 if(file_exists):
     shutil.copyfile(analysis_file, analysis_bkup_file)

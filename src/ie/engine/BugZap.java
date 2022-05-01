@@ -13,25 +13,23 @@ import ie.engine.interaction.*;
 import ie.engine.loading.SongInfo;
 import ie.engine.maths.*;
 import ie.engine.objects.*;
+import ie.engine.testing.Debug;
 
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.Window;
-import java.io.File;
-import java.awt.Frame;
-import processing.awt.PSurfaceAWT;
 
 public class BugZap extends PApplet{
     int windowWidth = 480;
     int windowHeight = 480;
-
-    enum  GameState{
+    
+    enum GameState{
         SPLASH,
         MENU,
         RUNNING,
         EXIT
     }
-
+    
     public void drawBugs(List<Bug> bugs){
         for(Bug bug : bugs){
             bug.draw();
@@ -62,13 +60,13 @@ public class BugZap extends PApplet{
     ArrayList<Projectile> projectiles = new ArrayList<Projectile>(projectileLimit);
     ArrayList<Projectile> projectiles2remove = new ArrayList<>();
     RandomNumbers randomNumberGen = new RandomNumbers();
-
+    
     Robot rub;
     Window w;
     Player player;
     Menu menu;
     GameState engineState;
-
+    
     Physics physics;
     boolean debugStats = true;
     Koleada koleada;
@@ -83,13 +81,13 @@ public class BugZap extends PApplet{
     com.jogamp.newt.opengl.GLWindow win;
     PenroseLSystem ds;
     PenroseLSystem ds1;
-
+    Debug debugger;
     // used to hold threads until all threads are completed
     public Synchronization threadSyncer;
-
+    
     // holds the song information
     SongInfo songInfo;
-
+    
     public void generateBugLocations(){
         float[] randomX = randomNumberGen.generateUniqueSet(0, width, numBugs, this);
         float[] tempLocationY =  randomNumberGen.generateUniqueSet(0, height/2f, numBugs, this);
@@ -99,14 +97,14 @@ public class BugZap extends PApplet{
             //enemyBugs.add(new Bug(new Coordinate(randomX[i], tempLocationY[i]), 100, 1, this));
         }
     }
-
+    
     public void setupMenu(){
         // button coords
         Coordinate buttonSize = new Coordinate((2f * width) /3f, height/6f);
         Coordinate startBtnCoord = new Coordinate(width / 6f, height/16f);
         Coordinate quitBtnCoord = new Coordinate(width / 6f, buttonSize.y + startBtnCoord.y + height / 6f);
         Coordinate creditBtnCoord  = new Coordinate(width / 6f, buttonSize.y + quitBtnCoord.y + height / 6f);
-
+        
         menu = new Menu(this);
         menu.createMenuObject(Menu.MenuChoice.START, "Start Game", startBtnCoord, buttonSize);
         menu.createMenuObject(Menu.MenuChoice.QUIT, "Quit Game", quitBtnCoord, buttonSize);
@@ -156,16 +154,16 @@ public class BugZap extends PApplet{
         // used to generate items
         ds = new PenroseLSystem(this, new Coordinate(width/2/3, height/2, -100), new Coordinate(0, radians(-30f), 0));
         ds1 = new PenroseLSystem(this, new Coordinate(width/3, height/2, -100), new Coordinate(0, radians(30f), 0));
-
+        
         ds.simulate(5);
         ds1.simulate(5);
-
+        
     }
     public void quitGame(){
         beginCamera();
         camera();
         rotateX(0);
-
+        
         rotateY(0);
         rotateZ(0);
         endCamera();
@@ -185,6 +183,7 @@ public class BugZap extends PApplet{
     @Override
     public void setup(){
         engineState = GameState.MENU;
+        debugger = new Debug(this);
     }
     
     // TODO check all things in here are being created and recycled before creation
@@ -201,7 +200,7 @@ public class BugZap extends PApplet{
     Boolean wasBeat = false;
     @Override
     public void draw(){ 
-        startTime = System.nanoTime();
+        debugger.start();   
         clear();
         switch (engineState){
             case SPLASH:
@@ -242,8 +241,9 @@ public class BugZap extends PApplet{
                     if(!threadQueue.offer(koleada))
                         throw new IllegalStateException("Could not offer collision queue");
                     if(!threadQueue.offer(physics))
-                        throw new IllegalStateException("Could not offer collision queue");
+                        throw new IllegalStateException("Could not offer physics queue");
                 } catch (IllegalStateException e){
+                    System.err.println(e);
                     System.out.println("Thread failed to be added to queue");
                     exit();
                 }
@@ -272,6 +272,7 @@ public class BugZap extends PApplet{
                     directionalLight(currentColor, 162, 200, -1, 0, 0);
                     
                 }
+
                 if(audioSync.song.positionFrame() < AudioSync.songParts.VERSE1.get() ){
                     pushMatrix();
                     translate(0, height*0.35f, -200f);
@@ -353,18 +354,14 @@ public class BugZap extends PApplet{
                 // HUD to display text 
                 // ALL THINGS RENDERED IN HERE RENDER ON TOP
                 */
+                // ds.render();
+                // ds1.render();
+                // camera used for HUD
                 camera();
-                noLights();
-                ds.render();
-                ds1.render();
                 hint(DISABLE_DEPTH_TEST); 
+                noLights();
                 if(debugStats){
-                    fill(200);
-                    frameTime = (System.nanoTime() - startTime) / (float)1000000.0;
-
-                    textSize(10);
-                    text("frame time: " + frameTime + "ms" , 5, 10);  // Text wraps within text box
-                    
+                    debugger.draw(); 
                 }
                 while(!threadSyncer.isFree()){
 
@@ -384,7 +381,6 @@ public class BugZap extends PApplet{
         for (float a = 0; a < TWO_PI; a += angle) {
             if(count % 2 == 1){
                 vertex(x + cos(a) * radius, y + sin(a) * radius);
-                
             } else {
                 vertex(x + cos(a) * random(2, 4) * radius, sin(a) * random(2, 4) * radius);
             }
@@ -424,6 +420,7 @@ public class BugZap extends PApplet{
             player.viewAngle.r = 0;
             player.viewAngle.normalize();
             // println(player.viewAngle.p);
+            // resets mouse to center of screen
             rub.mouseMove( win.getX() +  width/2, win.getY() + height/2);
         }
     }

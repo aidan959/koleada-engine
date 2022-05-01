@@ -46,7 +46,8 @@ public class AudioSync {
     public AudioEvent isBeat(){
         this.wasBeat = false;
         missedFrameCounter = -1;
-        if(songInfo.eventList.peek().frame > song.positionFrame()){
+        lastEvent = songInfo.eventList.blank;
+        if((songInfo.eventList.peek().frame > song.positionFrame())){
             // returns this blank value
             return songInfo.eventList.blank;
         }

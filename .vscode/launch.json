@@ -9,6 +9,20 @@
             "name": "Launch NewScene",
             "request": "launch",
             "mainClass": "ie.engine.testing.NewScene",
+            "projectName": "koleada-engine_77869aa"
+        },
+        {
+            "type": "java",
+            "name": "Launch Main",
+            "request": "launch",
+            "mainClass": "ie.engine.Main",
+            "projectName": "koleada-engine_77869aa"
+        },
+        {
+            "type": "java",
+            "name": "Launch NewScene",
+            "request": "launch",
+            "mainClass": "ie.engine.testing.NewScene",
             "projectName": "koleada-engine_f555b95d"
         },
         {
@@ -27,8 +41,8 @@
             "justMyCode": true,
             "args": [
                 "assets/audio/songs/nrgq.wav",
-                "assets/audio/songs/nrgq.wav.anl",
-                "assets/audio/songs/nrgq.wav.anl.bk"
+                ".anl",
+                ".bk"
             ]
         }
     ]

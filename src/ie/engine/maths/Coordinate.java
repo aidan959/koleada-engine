@@ -74,6 +74,9 @@ public class Coordinate{
         y = 0;
         z = 0;
     }
+    public Coordinate get(){
+        return this;
+    }
     public float distance(Coordinate c){
         
         return distance(c.x, c.y, c.z);
@@ -84,5 +87,12 @@ public class Coordinate{
     public float magnitude(){
         return((float)Math.sqrt(x*x + y*y + z*z));
     }
-    
+    public Coordinate map(Coordinate destination, float line){
+        return new Coordinate((destination.x - this.x) * line, 
+                              (destination.y - this.y) * line,
+                              (destination.z - this.z) * line);
+    }
+    public Coordinate duplicate(){
+        return new Coordinate(x, y, z);
+    }
 }

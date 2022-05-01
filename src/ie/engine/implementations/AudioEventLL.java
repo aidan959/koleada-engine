@@ -12,7 +12,7 @@ public class AudioEventLL {
     }
     public AudioEvent blank = new AudioEvent(EventType.KICK, 0, 0.0f);
     public class AudioEvent{
-        AudioEvent next;
+        public AudioEvent next;
         EventType eventType;
         public int frame;
         public float volume;
@@ -47,6 +47,9 @@ public class AudioEventLL {
             }
             p.next = newItem;
         }
+    }
+    public AudioEvent getHead(){
+        return head;
     }
 
 }

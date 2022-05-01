@@ -119,7 +119,6 @@ public class SongInfo{
         processBuilder.redirectErrorStream(true);
 
         Process process = processBuilder.start();
-        BufferedReader n = new BufferedReader(new InputStreamReader(process.getInputStream()));
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
         while ((line = reader.readLine()) != null)
