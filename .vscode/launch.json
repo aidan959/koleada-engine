@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch AidanTesting",
+            "request": "launch",
+            "mainClass": "ie.engine.testing.AidanTesting",
+            "projectName": "koleada-engine_77869aa"
+        },
+        {
+            "type": "java",
             "name": "Launch NewScene",
             "request": "launch",
             "mainClass": "ie.engine.testing.NewScene",

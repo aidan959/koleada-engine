@@ -1,27 +1,38 @@
 package ie.engine.testing;
 
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import ie.engine.Scene;
 import processing.core.PApplet;
 
 public class Debug {
     PApplet pa;
-    float frameTime;
-    float frameRate;
+    public float frameTime;
     boolean doDebug = false;
-    public Debug(PApplet pa){
+    public HashMap<String, DebugObject<Object>> debugMap;
+    public Debug(Scene pa, Map<String, DebugObject<Object>> debugMap){
         this.pa = pa;
+        this.debugMap = (HashMap<String, DebugObject<Object>>)debugMap;
     }
     public void start(){
         frameTime = System.nanoTime();
 
     }
+    public float getFrameTime(){
+        return(System.nanoTime() - frameTime) / (float)1000000.0;
+    }
     public void draw(){
         frameTime = (System.nanoTime() - frameTime) / (float)1000000.0;
-        frameRate = pa.frameRate;
         pa.fill(200);
-        pa.textSize(10);
-        pa.text("frametime: " + frameTime + "ms" , 5, 5);  // Text wraps within text box
-        pa.text("framerate: " + frameRate + "ms" , 5, 15);  // Text wraps within text box
-
+        pa.textSize(15);
+        int i = 0;
+        for(DebugObject<Object> dObject : debugMap.values()){
+            pa.text(dObject.toString() , 5f , 15 + (i++ * 15f));  // Text wraps within text box
+        }
+        
     }
 
 }

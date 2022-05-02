@@ -1,43 +1,35 @@
 package ie.engine.testing;
 
-import ie.engine.implementations.ParticleSystem;
+
+import ie.engine.Scene;
 import ie.engine.implementations.AudioEventLL.AudioEvent;
 import ie.engine.interaction.AudioSync;
 import ie.engine.loading.SongInfo;
 import ie.engine.maths.Animation;
-import ie.engine.maths.Coordinate;
-import ie.engine.maths.KeyFrame;
+
 import ie.engine.objects.Waves;
 import processing.core.PApplet;
 
-public class NewScene  extends PApplet{
-
-    AudioSync audioSync;
-    SongInfo songInfo; 
-    AudioEvent tempEvent;
-    boolean wasBeat;
-    Debug debugger;
-    Waves wavey;
+public class NewScene  extends Scene{
     public void settings(){
-        size(480, 480, P3D);
+        super.settings();
     }
     public void setup(){
-        frameRate(60);
+        super.setup();
         String songName = "assets/audio/songs/nrgq.wav"; 
         audioSync = new AudioSync(this, songName);
         audioSync.play();
         songInfo = new SongInfo(songName);
-        debugger = new Debug(this);
-        wavey = new Waves(this);
+        lastEvent = audioSync.songInfo.eventList.blank;
 
     }
 
     float lerpValue;
     Animation testAnimation;
     float smoothBackground;
+    
     public void draw(){
-        debugger.start();
-        //clear();
+        super.draw();
         camera();
         tempEvent = audioSync.isBeat();
         wasBeat = audioSync.wasBeat;
@@ -52,17 +44,17 @@ public class NewScene  extends PApplet{
             smoothBackground = lerp(0.8f,0, smoothBackground );
             
         }
-        if(frameCount %2 == 1){
-            wavey.update(1);
-
-        }
-
+        System.out.println(bp.process());
+        
         // debug camera
         camera();
-        wavey.draw();
         hint(DISABLE_DEPTH_TEST); 
         noLights();
+
         if(debugger.doDebug){
+            debugDictionary.get("frametime").updateValue(debugger.getFrameTime());
+            debugDictionary.get("framerate").updateValue(frameRate);
+            debugDictionary.get("avgbeattime").updateValue((((float)audioSync.averageBeatTime)/(float)(songInfo.sampleRate)));
             debugger.draw();
         }
     }

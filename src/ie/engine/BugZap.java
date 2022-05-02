@@ -3,7 +3,6 @@ package ie.engine;
 import java.util.ArrayList;
 import java.util.List;
 
-import processing.core.PApplet;
 import java.util.concurrent.*;
 
 import ie.engine.implementations.AudioEventLL;
@@ -19,7 +18,7 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.Window;
 
-public class BugZap extends PApplet{
+public class BugZap extends Scene{
     int windowWidth = 480;
     int windowHeight = 480;
     
@@ -76,17 +75,14 @@ public class BugZap extends PApplet{
     BlockingQueue<Runnable> threadQueue;
     Semaphore entityListLock = new Semaphore(3);
     float frameTime;
-    AudioSync audioSync;
+
     ForkJoinPool forkJoinPool;
     com.jogamp.newt.opengl.GLWindow win;
     PenroseLSystem ds;
     PenroseLSystem ds1;
-    Debug debugger;
     // used to hold threads until all threads are completed
     public Synchronization threadSyncer;
-    
-    // holds the song information
-    SongInfo songInfo;
+
     
     public void generateBugLocations(){
         float[] randomX = randomNumberGen.generateUniqueSet(0, width, numBugs, this);
@@ -94,7 +90,7 @@ public class BugZap extends PApplet{
         
         // spawns d bugs
         for(int i=0; i< numBugs; i++){
-            //enemyBugs.add(new Bug(new Coordinate(randomX[i], tempLocationY[i]), 100, 1, this));
+            enemyBugs.add(new Bug(new Coordinate(randomX[i], tempLocationY[i]), 100, 1, this));
         }
     }
     
@@ -118,7 +114,7 @@ public class BugZap extends PApplet{
         listObjs.add(player);
         
         // generates bugs and random locations
-        generateBugLocations();
+        //generateBugLocations();
         
         
         for(Bug bug : enemyBugs){
@@ -182,8 +178,9 @@ public class BugZap extends PApplet{
     }
     @Override
     public void setup(){
+        super.setup();
         engineState = GameState.MENU;
-        debugger = new Debug(this);
+        
     }
     
     // TODO check all things in here are being created and recycled before creation
@@ -194,13 +191,11 @@ public class BugZap extends PApplet{
     float constColor = 46;
     float currentSize;
     float lastVolume;
-    AudioEventLL.AudioEvent tempEvent;
     boolean menuCreated = false;
     boolean doCleanGame = false;
-    Boolean wasBeat = false;
     @Override
     public void draw(){ 
-        debugger.start();   
+        super.draw(); 
         clear();
         switch (engineState){
             case SPLASH:

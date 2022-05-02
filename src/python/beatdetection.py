@@ -27,17 +27,18 @@ o = tempo("specdiff", win_s, hop_s, samplerate)
 onsets = []
 volume = []
 total_frames = 0
-def averageEnergy(samples):
-    total = 0
+def highest_energy(samples):
+    highest_val = 0
     for i in range(0,(3*hop_s//4)):
-        total += abs(samples[i])
-    return total / ((3*hop_s//4))
+        if( abs(samples[i]) > highest_val):
+            highest_val = abs(samples[i])
+    return highest_val
 while True:
     samples, read = s()
     if o(samples):
         #print("%f" % o.get_last_s())
         onsets.append(o.get_last())
-        volume.append(averageEnergy(samples))
+        volume.append(highest_energy(samples))
     total_frames += read
     if read < hop_s:
         break

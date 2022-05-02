@@ -1,5 +1,10 @@
 package ie.engine.testing;
 import processing.core.PApplet;
+
+import java.util.HashMap;
+import java.util.Hashtable;
+
+import ie.engine.Scene;
 import ie.engine.implementations.ParticleSystem;
 import ie.engine.implementations.AudioEventLL.AudioEvent;
 import ie.engine.interaction.AudioSync;
@@ -9,24 +14,19 @@ import ie.engine.maths.Coordinate;
 import ie.engine.maths.KeyFrame;
 import ie.engine.objects.Waves;
 
-public class AidanTesting extends PApplet{
+public class AidanTesting extends Scene{
 
-    AudioSync audioSync;
-    SongInfo songInfo; 
-    AudioEvent tempEvent;
-    boolean wasBeat;
-    Debug debugger;
-    Waves wavey;
-    public void settings(){
-        size(480, 480, P3D);
-    }
+    public Waves wavey;
     public void setup(){
-        frameRate(60);
+        super.setup();
         String songName = "assets/audio/songs/nrgq.wav"; 
         audioSync = new AudioSync(this, songName);
         audioSync.play();
         songInfo = new SongInfo(songName);
-        debugger = new Debug(this);
+        
+        
+
+
         KeyFrame[] frames = new KeyFrame[4];
         frames[0] = new KeyFrame(0, new Coordinate(0, 0, 0));
         frames[1] = new KeyFrame(100000, new Coordinate(15, 15, 15));
@@ -45,8 +45,12 @@ public class AidanTesting extends PApplet{
     float lerpValue;
     Animation testAnimation;
     float smoothBackground;
+
+    
+    int cumulativeFrames;
     public void draw(){
-        debugger.start();
+        super.draw();
+        
         testAnimation.run(audioSync.song.positionFrame());
         //clear();
         camera();
@@ -57,8 +61,8 @@ public class AidanTesting extends PApplet{
         if(wasBeat){
             // int divisions = (songInfo.eventList.peek().frame - tempEvent.frame)/4;
             //System.out.println("Beat " + tempEvent.frame + " of volume: " + tempEvent.volume);
-            audioSync.isBeat();
-            
+            lastEvent = tempEvent;
+            cumulativeFrames += lastEvent.frame;
 
             for(int i = 0; i < 4; i++){
                 ps.addParticle(new Coordinate(0, 10f * i, 0), new Coordinate(0.5f, 0, 5f), new Coordinate(5, 5, 5));
@@ -73,16 +77,45 @@ public class AidanTesting extends PApplet{
             wavey.update(1);
 
         }
+        angle += 0.001f;
+        if(lastEvent != null){
+            // System.out.println(map(audioSync.song.positionFrame() - lastEvent.frame, 0, audioSync.peekNext().frame - lastEvent.frame, 0, 180));
+            // System.out.println("Length in frame " + (audioSync.song.positionFrame() - lastEvent.frame) 
+            //                 +  "\nLength of gap " + (audioSync.peekNext().frame - lastEvent.frame)
+            //                 + "\nLast Frame: "  + lastEvent.frame 
+            //                 + "\nNext Frame: " +  audioSync.peekNext().frame
+            //                 + "\nCurrent Frame: " + audioSync.song.positionFrame() );
+            lightning(10, width * sin(bp.process()), cos(degrees(angle)));
+        }
         //rect(0, 0, 100, 100);
         ps.run();
+        ps2.run();
         camera();
         wavey.draw();
         hint(DISABLE_DEPTH_TEST); 
         noLights();
         if(debugger.doDebug){
+            debugDictionary.get("frametime").updateValue(debugger.getFrameTime());
+            debugDictionary.get("framerate").updateValue(frameRate);
+            debugDictionary.get("avgbeattime").updateValue((((float)audioSync.averageBeatTime)/(float)(songInfo.sampleRate)));
             debugger.draw();
         }
     }
+    float angle =0;
+    void lightning(int n, float posX,float posY)
+        {
+            for(int i = 0; i < n; i++)
+            {
+                fill(map(i,0,n,0,255),255,255);
+                pushMatrix();
+                rotateY(TAU * i/n);
+                rotateZ(PI/12);
+                translate(posX,100,posY);      
+                box(10,100,10);
+                if(i == 1)lightning(n - 1,posX, posY);
+                popMatrix();
+            }
+        }  
     public void keyPressed(){
         if(key == 'n' ){
             debugger.doDebug = !debugger.doDebug;
@@ -90,7 +123,7 @@ public class AidanTesting extends PApplet{
     }
     static String[] gameArgs = {"Main"};
     public static void main(String[] args){
-        PApplet.runSketch(gameArgs, new NewScene());
+        PApplet.runSketch(gameArgs, new AidanTesting());
     }
 }
 

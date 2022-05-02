@@ -145,10 +145,10 @@ public class Waves {
         }
         
         pa.fill(255);
+        pa.pushMatrix();
         pa.translate(pa.width * .5f, pa.height*.5f,0f);
         pa.rotateY(PApplet.map(pa.mouseX,0f,pa.width,-PApplet.PI,PApplet.PI));
         pa.rotateX(PApplet.map(pa.mouseY,0f,pa.height,-PApplet.PI,PApplet.PI));
-        pa.pushMatrix();
         pa.text("foo!", -20, 0, 20);
         pa.popMatrix();
         }

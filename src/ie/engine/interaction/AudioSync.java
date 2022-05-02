@@ -35,6 +35,7 @@ public class AudioSync {
         songInfo = new SongInfo(songFile);
         bd = new Waveform(pa, samples);
         bd.input(song);
+        prev = songInfo.eventList.blank;
     }
     public void play(){
         song.play();
@@ -42,24 +43,38 @@ public class AudioSync {
     public AudioEvent lastEvent;
     public boolean wasBeat;
     public int missedFrameCounter;
-
+    public int averageBeatTime = 0;
+    public int beatCount = 0;
+    public long totalDifference;
+    public AudioEvent prev ;
     public AudioEvent isBeat(){
         this.wasBeat = false;
         missedFrameCounter = -1;
         lastEvent = songInfo.eventList.blank;
-        if((songInfo.eventList.peek().frame > song.positionFrame())){
+        AudioEvent peekFrame = peekNext();
+        if((peekFrame.frame > song.positionFrame())){
             // returns this blank value
             return songInfo.eventList.blank;
         }
         // otherwise it gets updated
-        while(songInfo.eventList.peek().frame < song.positionFrame() ){
+        while(peekFrame.frame < song.positionFrame() ){
+            peekFrame = peekNext();
             missedFrameCounter++;
+            beatCount++;
+            if(prev != peekFrame){ 
+                totalDifference +=  peekFrame.frame - prev.frame;
+            }
+            prev = peekFrame;
+            averageBeatTime = (int)(totalDifference/beatCount);
             lastEvent = songInfo.eventList.pop();
             // audioSync.updateMagnitude();
             this.wasBeat = true;
         }
         
         return lastEvent;
+    }
+    public AudioEvent peekNext(){
+        return songInfo.eventList.peek();
     }
     // laggier - make sure to use the newer isBeat which relies on processed data from before
     // remains as a fallback

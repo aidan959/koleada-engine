@@ -19,7 +19,7 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.Window;
 
-public class NRGQAnim extends PApplet{
+public class NRGQAnim extends Scene{
     
     enum  GameState{
         SPLASH,
@@ -191,8 +191,8 @@ public class NRGQAnim extends PApplet{
     }
     @Override
     public void setup(){
+        super.setup();
         engineState = GameState.MENU;
-        debugger = new Debug(this);
     }
     
     // TODO check all things in here are being created and recycled before creation
@@ -209,7 +209,7 @@ public class NRGQAnim extends PApplet{
     boolean wasBeat = false;
     @Override
     public void draw(){ 
-        debugger.start();   
+        super.draw();  
         clear();
         switch (engineState){
             case SPLASH:
