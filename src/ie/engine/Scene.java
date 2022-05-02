@@ -44,4 +44,24 @@ public class Scene extends PApplet {
         
         bp = new BeatPulse(this);
     }
+    public void keyPressed(){
+        if(key == '0'){
+            audioSync.song.jumpFrame((int)AudioSync.songParts.INTRO.get());
+        }
+        else if(key == '1'){
+            audioSync.song.jumpFrame((int)AudioSync.songParts.VERSE1.get());
+        } else if(key == '2'){
+            audioSync.song.jumpFrame((int)AudioSync.songParts.BRIDGE1.get());
+        } else if(key == '3'){
+            audioSync.song.jumpFrame((int)AudioSync.songParts.CHORUS1.get());
+        }  else if(key == '4'){
+            audioSync.song.jumpFrame((int)AudioSync.songParts.VERSE2.get());
+        }
+        else if(key == '5'){
+            audioSync.song.jumpFrame((int)AudioSync.songParts.BRIDGE2.get());
+        }
+        else if(key == '6'){
+            audioSync.song.jumpFrame((int)AudioSync.songParts.CHORUS2.get());
+        }
+    }
 }

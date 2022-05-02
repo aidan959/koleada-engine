@@ -19,8 +19,11 @@ public class AudioSync {
         INTRO(0),
         VERSE1(1305290L),
         BRIDGE1(3214644L),
-        CHORUS1(3),
-        VERSE2(4);
+        CHORUS1(4327088L),
+        VERSE2(6238896L),
+        BRIDGE2(8798316L),
+        CHORUS2(9898417L),
+        ;
         private final long value;
         private songParts(long  value){
             this.value = value;
