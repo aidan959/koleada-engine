@@ -22,7 +22,7 @@ public class TweedyNS  extends Scene{
         songInfo = new SongInfo(songName);
         lastEvent = audioSync.songInfo.eventList.blank;
         // bridge to chorus -- will start from bridge1
-        audioSync.song.jumpFrame((int)AudioSync.songParts.BRIDGE1.get());
+        audioSync.song.jumpFrame((int)AudioSync.songParts.BRIDGE2.get());
     }
 
     float lerpValue;
@@ -40,14 +40,14 @@ public class TweedyNS  extends Scene{
         tempEvent = audioSync.isBeat();
         wasBeat = audioSync.wasBeat;
         background(0,0, smoothBackground);
-        smoothCircle = lerp(smoothCircle, (tempEvent.volume * 1000) + 5, 0.05f );
+        smoothCircle = lerp(smoothCircle, (tempEvent.volume * 1000) + 5, 0.07f);
 
         // int x = 0;
         
         // sphere grid
 
-        for (int i = 0; i < 12; i++) {
-            for (int j = 0; j < 12; j++) {
+        for (int i = 0; i < 12; i+=1) {
+            for (int j = 0; j < 12; j+=1) {
                 fill(0, 255, 153);
                 float mapX = map(i, 0, 12, 0, width);
                 float mapY = map(j, 0, 12, 0, height);
@@ -89,24 +89,23 @@ public class TweedyNS  extends Scene{
             // center sphere
             pushMatrix();
             // fill(255, 0, 119);
-            translate(width/2, height/2, -50);
+            translate(width/2, height/2, -100);
             sphere(smoothCircle);
             popMatrix();
         } else {
             
             smoothBackground = lerp(0.8f,0, smoothBackground );
-            // angle is in radians (in map change sin(angle) -> sin(degrees(angle)) 
-            //                      if you want degrees)
-            angle += 0.02f;
-            pushMatrix();
             
             // nice red
             // fill(255, 0, 119);
-
+            
+            // angle is in radians (in map change sin(angle) -> sin(degrees(angle)) 
+            angle += 0.02f; //      if you want degrees)
+            pushMatrix();
             // first var in map is what you're converting with range (var2->var3) 
             // to the range (var4->var5) for fill() etc
-            fill(map(sin(angle), -1, 1, 0, 255), map(sin(angle*3), -1, 1, 0, 255), map(cos(angle), -1, 1, 0, 255));
-            translate(width/2+25, height/2, -50);
+            fill(map(sin(angle), -1, 1, 0, 255), map(sin(angle*5), -1, 1, 0, 255), map(sin(angle), -1, 1, 0, 255));
+            translate(width/2, height/2, -50);
             sphere(smoothCircle);
             popMatrix();
         }
