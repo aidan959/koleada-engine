@@ -36,6 +36,7 @@ public class Scene extends PApplet {
     }
     public void setup(){
         frameRate(60);
+        colorMode(RGB);
         debugDictionary = new HashMap<String, DebugObject<Object>>();
         debugDictionary.put("frametime", new DebugObject<Object>("frametime", 0, "ms"));
         debugDictionary.put("framerate", new DebugObject<Object>("framerate", 0, "ms"));
