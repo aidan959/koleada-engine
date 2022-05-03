@@ -34,10 +34,11 @@ public class Scene extends PApplet {
     }
     public void setup(){
         frameRate(60);
-        w = width;
-        h = height;
+        w = 480;
+        h = 480;
         surface.setResizable(true);
         textMode(MODEL);
+        colorMode(RGB);
         debugDictionary = new HashMap<String, DebugObject<Object>>();
         debugDictionary.put("frametime", new DebugObject<>("frametime", 0, "ms"));
         debugDictionary.put("framerate", new DebugObject<>("framerate", 0, "ms"));

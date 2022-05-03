@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch TweedyNS",
+            "request": "launch",
+            "mainClass": "ie.engine.testing.TweedyNS",
+            "projectName": "koleada-engine_e52ef0b5"
+        },
+        {
+            "type": "java",
             "name": "Launch AidanTesting",
             "request": "launch",
             "mainClass": "ie.engine.testing.AidanTesting",
