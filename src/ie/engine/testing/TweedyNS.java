@@ -10,13 +10,13 @@ import ie.engine.maths.Animation;
 import ie.engine.objects.Waves;
 import processing.core.PApplet;
 
-public class TweedyNS  extends Scene{
+public class TweedyNS extends Scene{
     public void settings(){
         super.settings();
     }
     public void setup(){
         super.setup();
-        String songName = "assets/audio/songs/nrgq.wav"; 
+        String songName = "assets/audio/songs/nrgq.wav";
         audioSync = new AudioSync(this, songName);
         audioSync.play();
         songInfo = new SongInfo(songName);
@@ -31,6 +31,10 @@ public class TweedyNS  extends Scene{
     float smoothCircle = 0;
     float circleFill = 0;
     float angle = 0;
+    int filled = 0;
+    int maxCubes = 4;
+    
+    public float border = 0;
 
     public void draw(){
         super.draw();
@@ -41,38 +45,32 @@ public class TweedyNS  extends Scene{
         wasBeat = audioSync.wasBeat;
         background(0,0, smoothBackground);
         smoothCircle = lerp(smoothCircle, (tempEvent.volume * 1000) + 5, 0.07f);
+        int currentFrame = audioSync.song.positionFrame();
 
-        // int x = 0;
-        
-        // sphere grid
+        // rotateX(sin(angle));
+        // rotateY(angle);
 
-        for (int i = 0; i < 12; i+=1) {
-            for (int j = 0; j < 12; j+=1) {
-                fill(0, 255, 153);
-                float mapX = map(i, 0, 12, 0, width);
-                float mapY = map(j, 0, 12, 0, height);
-                // circle(mapX+20, mapY+20, 40);
-
-                pushMatrix();
-                translate(mapX+25, mapY+25, -50);
-                sphere(smoothCircle);
-                popMatrix();
-            }
-        }
-
-        // cuboids
-
-        for (int i = 1; i < 4; i++) {
-            for (int j = 1; j < 4; j++) {
-                pushMatrix();
-                translate(width*i/4, height*j/4, map(audioSync.song.positionFrame(), 0, 100000, 50, 100));
-                box(70);
-                popMatrix();
+        if(currentFrame > 9907884) {
+            // cuboids
+            for (int i = 1; i < maxCubes; i++) {
+                for (int j = 1; j < maxCubes; j++) {
+                    pushMatrix();
+                    // translate(width*i/4, height*j/4, map(sin(audioSync.song.positionFrame()), 0, 100000, 60, 50));
+                    rectMode(CENTER);
+                    stroke(0, 255, 140);
+                    noFill();
+                    translate(width*i/4, height*j/4, map(sin(angle), -1, 1, -1000, -100));
+                    rotate(sin(angle)*2);
+                    rotateY(angle);
+                    rotateZ(sin(angle));
+                    box(70);
+                    popMatrix();
+                }
             }
         }
 
         // can draw stuff outside the if(wasBeat) too
-        if(wasBeat){
+        if (wasBeat) {
             // runs if there was a beat provided
 
             // only execute before / after first verse etc
@@ -85,29 +83,86 @@ public class TweedyNS  extends Scene{
             // map(audioSync.song.positionFrame(),AudioSync.songParts.BRIDGE1.get(), AudioSync.songParts.CHORUS1.get(), 0, 100 );
 
             smoothBackground = lerp(0.8f,tempEvent.volume, smoothBackground );
+            // sphere grid
+            noStroke();
+            for (int i = 0; i < 9; i+=1) {
+                for (int j = 0; j < 9; j+=1) {
+                    // float c = map(arg0, arg1, arg2, arg3, arg4)
+                    // float c = map((i * j), 0, 9, 0, 255) % 256;
+                    
+                    if ((frameCount % 120) == 0) {
+                        fill(random(100, 240), random(100, 240), random(100, 240));
+                    }
+                    float mapX = map(i, 0, 9, 0, width);
+                    float mapY = map(j, 0, 9, 0, height);
+                    // circle(mapX+20, mapY+20, 40);
+                    
+                    pushMatrix();
+                    translate(mapX+25, mapY+25, -10);
+                    sphere(smoothCircle);
+                    popMatrix();
+                }
+            }
+
+            // cuboids
+                for (int i = 1; i < 4; i++) {
+                    for (int j = 1; j < 4; j++) {
+                        pushMatrix();
+                        // translate(width*i/4, height*j/4, map(sin(audioSync.song.positionFrame()), 0, 100000, 60, 50));
+                        rectMode(CENTER);
+                        // stroke(0, 255, 140);
+                        stroke(255, 0, 0);
+                        noFill();
+                        fill(random(100, 240), random(100, 240), random(100, 240));
+                        translate(width*i/4, height*j/4, map(sin(angle), -1, 1, -1000, -100));
+                        rotate(sin(angle)*2);
+                        rotateY(angle*5100);
+                        rotateZ(sin(angle));
+                        scale(10);
+                        box(70);
+                        popMatrix();
+                    }
+                }
+
+            System.out.println(audioSync.song.positionFrame());
+        } else {
+            smoothBackground = lerp(0.8f,0, smoothBackground );
+            
+            // angle is in radians (in map change sin(angle) -> sin(degrees(angle)) 
+            angle += 0.02f; //      if you want degrees)
+            // first var in map is what you're converting with range (var2->var3) 
+            // to the range (var4->var5) for fill() etc
+            fill(map(sin(angle), -1, 1, 0, 255), map(sin(angle*5), -1, 1, 0, 255), map(sin(angle), -1, 1, 0, 255));
 
             // center sphere
             pushMatrix();
             // fill(255, 0, 119);
             translate(width/2, height/2, -100);
-            sphere(smoothCircle);
+            // sphere(smoothCircle);
+            circle(width/2-100, height/2-100, 200);
             popMatrix();
-        } else {
             
-            smoothBackground = lerp(0.8f,0, smoothBackground );
+            noStroke();
+            for (int i = 0; i < 9; i+=1) {
+                for (int j = 0; j < 9; j+=1) {
+                    // float c = map(arg0, arg1, arg2, arg3, arg4)
+                    // float c = map((i * j), 0, 9, 0, 255) % 256;
+                    if ((frameCount % 120) == 0) {
+                        fill(random(100, 240), random(100, 240), random(100, 240));
+                    }
+                    // fill(c, c+12, c+60);
+                    float mapX = map(i, 0, 9, 0, width);
+                    float mapY = map(j, 0, 9, 0, height);
+                    // circle(mapX+20, mapY+20, 40);
+                    
+                    pushMatrix();
+                    translate(mapX+25, mapY+25, -10);
+                    sphere(smoothCircle);
+                    popMatrix();
+                }
+            }
             
-            // nice red
-            // fill(255, 0, 119);
             
-            // angle is in radians (in map change sin(angle) -> sin(degrees(angle)) 
-            angle += 0.02f; //      if you want degrees)
-            pushMatrix();
-            // first var in map is what you're converting with range (var2->var3) 
-            // to the range (var4->var5) for fill() etc
-            fill(map(sin(angle), -1, 1, 0, 255), map(sin(angle*5), -1, 1, 0, 255), map(sin(angle), -1, 1, 0, 255));
-            translate(width/2, height/2, -50);
-            sphere(smoothCircle);
-            popMatrix();
         }
         // System.out.println(bp.process());
         
