@@ -52,7 +52,6 @@ public class Scene extends PApplet {
         debugger = new Debug(this, debugDictionary);
         bp = new BeatPulse(this);
     }
-
     public void keyPressed(){
         if(key == '0'){
             audioSync.song.jumpFrame((int)AudioSync.songParts.INTRO.get());
