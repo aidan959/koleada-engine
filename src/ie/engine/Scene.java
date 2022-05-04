@@ -31,6 +31,7 @@ public class Scene extends PApplet {
     public void draw(){
         debugger.start();
         currentFrame = audioSync.song.positionFrame();
+        clear();
     }
     public void setup(){
         frameRate(60);
