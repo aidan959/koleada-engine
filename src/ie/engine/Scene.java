@@ -32,7 +32,7 @@ public class Scene extends PApplet {
     }
     public void draw(){
         debugger.start();
-        
+        clear();
     }
     public void setup(){
         frameRate(60);
