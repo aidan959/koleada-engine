@@ -56,6 +56,59 @@ public class BenTesting extends Scene{
         if (c >= 255)  c=0;  else  c++;
         //background(c, 255, 255);
 
+        for(int i = 0; i < size ;i++){
+            for(int j = 0; j < size; j++)
+            {
+                pushMatrix();
+                fill(map(i, 0, size, 0, 255),255, 255);
+
+                if (second() % 2== 0) {  
+                    jitter = random(-1, 0);
+                }
+
+                angle = angle + jitter;
+                float c = tan(angle);
+
+                //translate(width*i/2, height*i/2, -100);
+
+                rotate(c);
+                rotateY(9);
+                rotateX(5); 
+                translate(width*i/2, height*i/2, 100);     
+                box(box);
+                popMatrix(); 
+                
+
+            }
+        }
+
+        for(int i = 0; i < size ;i++){
+            for(int j = 0; j < size; j++)
+            {
+                pushMatrix();
+                fill(map(i, 0, size, 0, 255),255, 255);
+
+                if (second() % 2 == 0) {  
+                    jitter = random(-1, 0);
+                }
+
+                angle = angle + jitter;
+                float c = tan(angle);
+
+                //translate(width*i/2, height*i/2, -100);
+
+                rotate(c);
+                rotateY(9);
+                rotateX(5); 
+                translate(width/4, height/4, 100);     
+                box(box);
+                popMatrix(); 
+                
+
+            }
+        }
+        
+
 
 
         
@@ -80,57 +133,6 @@ public class BenTesting extends Scene{
             popMatrix();
             */
 
-            for(int i = 0; i < size ;i++){
-                for(int j = 0; j < size; j++)
-                {
-                    pushMatrix();
-                    fill(map(i, 0, size, 0, 255),255, 255);
-    
-                    if (second() % 3 == 0) {  
-                        jitter = random(-1, 0);
-                    }
-    
-                    angle = angle + jitter;
-                    float c = tan(angle);
-    
-                    //translate(width*i/2, height*i/2, -100);
-    
-                    rotate(c);
-                    rotateY(9);
-                    rotateX(5); 
-                    translate(width*i/2, height*i/2, 100);     
-                    box(box);
-                    popMatrix(); 
-                    
-
-                }
-            }
-
-            for(int i = 0; i < size ;i++){
-                for(int j = 0; j < size; j++)
-                {
-                    pushMatrix();
-                    fill(map(i, 0, size, 0, 255),255, 255);
-                    if (second() % 3 == 0) {  
-                        jitter = random(-1, 0);
-                    }
-    
-                    angle = angle + jitter;
-                    float c = tan(angle);
-    
-                    //translate(width*i/2, height*i/2, -100);
-    
-                    rotate(c);
-                    rotateY(9);
-                    rotateX(5);
-                    translate(width/4, height/4, 100);     
-                    box(box);
-                    popMatrix(); 
-                    
-
-                }
-            }
-
 
         } else {
             
@@ -142,65 +144,7 @@ public class BenTesting extends Scene{
             box(box); 
             popMatrix();
             */
-
-
-            for(int i = 0; i < size ;i++){
-                for(int j = 0; j < size; j++)
-                {
-                    pushMatrix();
-                    fill(map(i, 0, size, 0, 255),255, 255);
-    
-                    if (second() % 3 == 0) {  
-                        jitter = random(-1, 0);
-                    }
-    
-                    angle = angle + jitter;
-                    float c = tan(angle);
-    
-                    //translate(width*i/2, height*i/2, -100);
-    
-                    rotate(c);
-                    rotateY(9);
-                    rotateX(5); 
-                    translate(width*i/2, height*i/2, 100);     
-                    box(box);
-                    popMatrix(); 
-                    
-
-                }
-            }
-            for(int i = 0; i < size ;i++){
-                for(int j = 0; j < size; j++)
-                {
-                    pushMatrix();
-                    fill(map(i, 0, size, 0, 255),255, 255);
-    
-                    if (second() % 3 == 0) {  
-                        jitter = random(-1, 0);
-                    }
-    
-                    angle = angle + jitter;
-                    float c = tan(angle);
-    
-                    //translate(width*i/2, height*i/2, -100);
-    
-                    rotate(c);
-                    rotateY(9);
-                    rotateX(5); 
-                    translate(width/4, height/4, 100);     
-                    box(box);
-                    popMatrix(); 
-                    
-
-                }
-            }
-
-
-
-    
-
-
-         
+       
         }
         // System.out.println(bp.process());
         
