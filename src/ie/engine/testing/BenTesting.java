@@ -38,36 +38,180 @@ public class BenTesting extends Scene{
     int i;
 
 
+
     
 
     public void draw(){
         super.draw();
         noStroke();
-        camera();
+        //camera();
+        camera(mouseX, mouseY, (width) / tan(PI/6), width*i, height*i, 0, 1, 1, 0);
         lights();
         tempEvent = audioSync.isBeat();
         wasBeat = audioSync.wasBeat;
         background(0,0, smoothBackground);
-        box = lerp(box, (tempEvent.volume * 800) + 10, 0.05f );
-        centrebox = lerp(centrebox, (tempEvent.volume * 1100) + 15, 0.05f );
-        sphereCentre = lerp(sphereCentre, (tempEvent.volume * 3000) + 100, 0.05f );
-        camera(mouseX, mouseY, (width) / tan(PI/6), width*i/2, height*i/2, 0, 1, 1, 0);
-
+        box = lerp(box, (tempEvent.volume * 750) + 20, 0.05f );
+        centrebox = lerp(centrebox, (tempEvent.volume * 600) + 25, 0.05f );
+        sphereCentre = lerp(sphereCentre, (tempEvent.volume * 10000) + 50, 0.05f );
+       
+        
         int currentFrame = audioSync.song.positionFrame();
 
-
+        /*
         pushMatrix();
-        float d = map(sphereCentre, 0, sphereCentre, 0, 255) % 256;
-        if (currentFrame < 1111111) 
-        {
-            fill(d,  255,  255);
-        }
-        else {
-            fill(d+12, d+ 50, d+30);
-        }
+        RGBColor d = RGBColor.toRGB((int)(map(sin(angle*5), -1, 1, 0, 255)), 255, 255, this);
         lights();
+        stroke(d.r, d.g, d.b);
         sphere(sphereCentre);
         popMatrix();
+        */
+        pushMatrix();
+        RGBColor d = RGBColor.toRGB((int)(map(tan(angle), -1, 1, 255, 255)), 255, 255, this);
+        
+        stroke(d.r, d.g, d.b);
+        sphere(sphereCentre);
+        popMatrix();
+
+        
+
+            if (currentFrame > 4984496 ){
+                for(int i = 0; i < box ;i++){
+                    for(int j = 0; j < box; j++)
+                    {
+                        fill(map(i, 0, box, 0, 255),255, 255);
+                        pushMatrix();
+                        // RGBColor b = RGBColor.toRGB((int)(map(sin(angle*5), -1, 1, 0, 255)), 255, 255, this);
+                
+                        if (second() % 2 == 0) {  
+                            jitter = random(-1, 0);
+                        }
+                
+                        angle = angle + jitter;
+                        float c = tan(angle);
+                        //translate(width*i/2, height*i/2, -100);
+                        noStroke();
+                        // stroke(b.r, b.g, b.b);
+                        rotate(c);
+                        rotateY(9);
+                        rotateX(5); 
+                        translate(width*i/20, height*i/20, -100);   
+        
+                        box(box);
+                        popMatrix();          
+            
+                    }
+                }
+
+                for(int i = 0; i < centrebox ;i++){
+                    for(int j = 0; j < centrebox; j++)
+                    {
+                        fill(map(i, 0, centrebox, 0, 255),255, 255);
+                        pushMatrix();
+        
+                        if (second() % 2 == 0) {  
+                            jitter = random(-1, 0);
+                        }
+        
+                        angle = angle + jitter;
+                        float c = tan(angle);
+        
+                        //translate(width*i/2, height*i/2, -100);
+        
+                        rotate(c);
+                        rotateY(9);
+                        rotateX(5); 
+                        translate(width*i/20, height*i/20, -100);     
+                        box(centrebox);
+                        popMatrix(); 
+                        
+                        
+                    }
+                }
+            
+        } else {
+            for(int i = 0; i < box ;i++){
+                for(int j = 0; j < box; j++)
+                {
+                    fill(map(i, 0, box, 0, 255),255, 255);
+                    pushMatrix();
+                    // RGBColor b = RGBColor.toRGB((int)(map(sin(angle*5), -1, 1, 0, 255)), 255, 255, this);
+            
+                    if (second() % 2 == 0) {  
+                        jitter = random(-1, 0);
+                    }
+            
+                    angle = angle + jitter;
+                    float c = tan(angle);
+                    //translate(width*i/2, height*i/2, -100);
+                    noStroke();
+                    // stroke(b.r, b.g, b.b);
+                    lerp(box, (tempEvent.volume * 100) + 20, 0.05f );
+                    rotate(c);
+                    rotateY(9);
+                    rotateX(5); 
+                    translate(width*i/100, height*i/100, -400);   
+    
+                    box(box);
+                    popMatrix();          
+        
+                }
+            }
+            for(int i = 0; i < centrebox ;i++){
+                for(int j = 0; j < centrebox; j++)
+                {
+                    fill(map(i, 0, centrebox, 0, 255),255, 255);
+                    pushMatrix();
+    
+                    if (second() % 2 == 0) {  
+                        jitter = random(-1, 0);
+                    }
+    
+                    angle = angle + jitter;
+                    float c = tan(angle);
+    
+                    //translate(width*i/2, height*i/2, -100);
+                    lerp(box, (tempEvent.volume * 10) + 20, 0.05f );
+                    rotate(c);
+                    rotateY(9);
+                    rotateX(5); 
+                    translate(width*i/10, height*i/10, -400);     
+                    box(centrebox);
+                    popMatrix(); 
+                    
+                    
+                }
+            }
+
+        } 
+        /*
+        for(int i = 0; i < centrebox ;i++){
+            for(int j = 0; j < centrebox; j++)
+            {
+                fill(map(i, 0, centrebox, 0, 255),255, 255);
+                pushMatrix();
+
+                if (second() % 2 == 0) {  
+                    jitter = random(-1, 0);
+                }
+
+                angle = angle + jitter;
+                float c = tan(angle);
+
+
+
+                rotate(c);
+                rotateY(9);
+                rotateX(5); 
+                translate(width*i/2, height*i/2, -400);     
+                box(centrebox);
+                popMatrix(); 
+                
+
+            }
+        }
+        */
+
+
 
 
         
@@ -92,62 +236,15 @@ public class BenTesting extends Scene{
             popMatrix();
             */
 
-            for(int i = 0; i < box ;i++){
-                for(int j = 0; j < box; j++)
-                {
-                    fill(map(i, 0, box, 0, 255),255, 255);
 
-                    pushMatrix();
-    
-                    if (second() % 2 == 0) {  
-                        jitter = random(-1, 0);
-                    }
-    
-                    angle = angle + jitter;
-                    float c = tan(angle);
-    
-                    //translate(width*i/2, height*i/2, -100);
-    
-                    rotate(c);
-                    rotateY(9);
-                    rotateX(5); 
-                    translate(width*i/8, height*i/8, -400);     
-                    box(box);
-                    popMatrix(); 
-                    
-    
-                }
-            }
 
-            for(int i = 0; i < centrebox ;i++){
-                for(int j = 0; j < centrebox; j++)
-                {
-                    fill(map(i, 0, centrebox, 0, 255),255, 255);
-                    pushMatrix();
-    
-                    if (second() % 2 == 0) {  
-                        jitter = random(-1, 0);
-                    }
-    
-                    angle = angle + jitter;
-                    float c = tan(angle);
-    
-                    //translate(width*i/2, height*i/2, -100);
-    
-                    rotate(c);
-                    rotateY(9);
-                    rotateX(5); 
-                    translate(width/100, height/100, -400);     
-                    box(centrebox);
-                    popMatrix(); 
-                    
-    
-                }
-            }
 
+
+            System.out.println(currentFrame);
 
         } else {
-            
+             
+            angle += 0.02f;
             /*
             smoothBackground = lerp(0.8f,0, smoothBackground );
             pushMatrix();
@@ -157,57 +254,7 @@ public class BenTesting extends Scene{
             popMatrix();
             */
 
-            for(int i = 0; i < box ;i++){
-                for(int j = 0; j < box; j++)
-                {
-                    fill(map(i, 0, box, 0, 255),255, 255);
-                    pushMatrix();
-    
-                    if (second() % 2 == 0) {  
-                        jitter = random(-1, 0);
-                    }
-    
-                    angle = angle + jitter;
-                    float c = tan(angle);
-    
-                    //translate(width*i/2, height*i/2, -100);
-    
-                    rotate(c);
-                    rotateY(9);
-                    rotateX(5); 
-                    translate(width*i/8, height*i/8, -400);     
-                    box(box);
-                    popMatrix(); 
-                    
-    
-                }
-            }
-        }
-
-        for(int i = 0; i < centrebox ;i++){
-            for(int j = 0; j < centrebox; j++)
-            {
-                fill(map(i, 0, centrebox, 0, 255),255, 255);
-                pushMatrix();
-
-                if (second() % 2 == 0) {  
-                    jitter = random(-1, 0);
-                }
-
-                angle = angle + jitter;
-                float c = tan(angle);
-
-                //translate(width*i/2, height*i/2, -100);
-
-                rotate(c);
-                rotateY(9);
-                rotateX(5); 
-                translate(width/100, height/100, -400);     
-                box(centrebox);
-                popMatrix(); 
-                
-
-            }
+             // fill(map(sin(angle), -1, 1, 0, 255), map(sin(angle*5), -1, 1, 0, 255), map(sin(angle), -1, 1, 0, 255));
         }
         // System.out.println(bp.process());
         
