@@ -51,17 +51,29 @@ public class NewScene  extends Scene{
             // map(audioSync.song.positionFrame(),AudioSync.songParts.BRIDGE1.get(), AudioSync.songParts.CHORUS1.get(), 0, 100 );
 
             smoothBackground = lerp(0.8f,tempEvent.volume, smoothBackground );
-            pushMatrix();
-            translate(width/2, height/2, -50);
-            sphere(smoothCircle);
-            popMatrix();
+            // pushMatrix();
+            // translate(width/2, height/2, -50);
+            // sphere(smoothCircle);
+            // popMatrix();
         } else {
             
             smoothBackground = lerp(0.8f,0, smoothBackground );
-            pushMatrix();
-            translate(width/2, height/2, -50);
-            sphere(smoothCircle);
-            popMatrix();
+            // pushMatrix();
+            // translate(width/2, height/2, -50);
+            // sphere(smoothCircle);
+            // popMatrix();
+            // int squares = (int) (mouseX / 20.0f);
+            // int squares = (int) (mouseX / 20.0f);
+            // int circles = 9; // amount of circles
+            // float h = width / (float) circles;
+            // int extent = 50; // size of circle
+            // for (int i = 0; i < circles; i++) {
+            //     noStroke();
+            //     fill(255);
+            //     float x = map(i, 0, circles, 0, width);
+            //     circle(x+(extent/2), x+(extent/2), extent);
+            //     circle(((width-h) - x)+(extent/2), x+(extent/2), extent);
+            // }
         }
         // System.out.println(bp.process());
         
