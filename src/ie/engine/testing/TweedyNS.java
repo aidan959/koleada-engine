@@ -22,7 +22,7 @@ public class TweedyNS extends Scene{
         songInfo = new SongInfo(songName);
         lastEvent = audioSync.songInfo.eventList.blank;
         // bridge to chorus -- will start from bridge2
-        audioSync.song.jumpFrame((int)AudioSync.songParts.BRIDGE2.get());
+        // audioSync.song.jumpFrame((int)AudioSync.songParts.BRIDGE2.get());
     }
 
     float lerpValue;
@@ -55,10 +55,7 @@ public class TweedyNS extends Scene{
         smoothColor = lerp(smoothColor, (tempEvent.volume * 555) + 5, 0.07f);
         int currentFrame = audioSync.song.positionFrame();
         RGBColor rand = RGBColor.toRGB((int)(random(0, 255)), 255, 255, this);
-        
-
-        
-        // can draw stuff outside the if(wasBeat) too
+                
         if (wasBeat) {
             // runs if there was a beat provided
 
@@ -142,7 +139,7 @@ public class TweedyNS extends Scene{
             }
             popMatrix();
         }
-        
+
         if(currentFrame > 9907784 ) {
             // cuboids
             for (int i = 1; i < maxCubes; i++) {
