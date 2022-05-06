@@ -5,7 +5,6 @@ import ie.engine.implementations.Synchronization;
 import ie.engine.maths.Koleada.Collision;
 import ie.engine.objects.*;
 import processing.core.PApplet;
-import java.util.concurrent.*;
 
 public class Physics implements Runnable{
 

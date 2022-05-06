@@ -2,18 +2,12 @@ package ie.engine;
 
 import processing.core.PApplet;
 import java.util.HashMap;
-import java.util.Hashtable;
 
 import ie.engine.Scene;
-import ie.engine.implementations.ParticleSystem;
 import ie.engine.implementations.AudioEventLL.AudioEvent;
 import ie.engine.interaction.AudioSync;
 import ie.engine.loading.SongInfo;
-import ie.engine.maths.Animation;
 import ie.engine.maths.BeatPulse;
-import ie.engine.maths.Coordinate;
-import ie.engine.maths.KeyFrame;
-import ie.engine.objects.Waves;
 import ie.engine.testing.Debug;
 import ie.engine.testing.DebugObject;
 
@@ -27,23 +21,32 @@ public class Scene extends PApplet {
     public BeatPulse bp;
     public AudioEvent lastEvent;
     public HashMap<String, DebugObject<Object>> debugDictionary;
+    public int currentFrame;
     public void settings(){
         size(480, 480, P3D);
     }
     public void draw(){
         debugger.start();
-        
+        currentFrame = audioSync.song.positionFrame();
     }
     public void setup(){
         frameRate(60);
+        textMode(MODEL);
         debugDictionary = new HashMap<String, DebugObject<Object>>();
-        debugDictionary.put("frametime", new DebugObject<Object>("frametime", 0, "ms"));
-        debugDictionary.put("framerate", new DebugObject<Object>("framerate", 0, "ms"));
-        debugDictionary.put("avgbeattime",new DebugObject<Object>("average beat time", 0, "frames"));
-        debugger = new Debug(this, debugDictionary);
+        debugDictionary.put("frametime", new DebugObject<>("frametime", 0, "ms"));
+        debugDictionary.put("framerate", new DebugObject<>("framerate", 0, "ms"));
+        debugDictionary.put("avgbeattime",new DebugObject<>("average beat time", 0, "seconds"));
+        debugDictionary.put("currentframe",new DebugObject<>("current frame", 0, "frame"));
+        debugDictionary.put("lastframe",new DebugObject<>("last beat frame", 0, "frame"));
+        debugDictionary.put("nextframe",new DebugObject<>("next beat frame", 0, "frame"));
         
+
+         
+        
+        debugger = new Debug(this, debugDictionary);
         bp = new BeatPulse(this);
     }
+
     public void keyPressed(){
         if(key == '0'){
             audioSync.song.jumpFrame((int)AudioSync.songParts.INTRO.get());

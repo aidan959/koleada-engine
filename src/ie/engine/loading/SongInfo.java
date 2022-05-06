@@ -1,6 +1,5 @@
 package ie.engine.loading;
 
-import javax.management.RuntimeErrorException;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -125,9 +124,9 @@ public class SongInfo{
             System.out.println("tasklist: " + line);
         process.waitFor();
         int exitVal = process.exitValue();
-        if(process.exitValue() == 1){
+        if(exitVal == 1){
             throw new RuntimeException("f");
-        } else if(process.exitValue() == 100){
+        } else if(exitVal == 100){
             return true;
         }
         return false;
@@ -146,10 +145,5 @@ public class SongInfo{
         } catch(IOException e){
             throw new RuntimeException("a");
         }
-    }
-    
-    public static void main(String args[]){
-        SongInfo sf = new SongInfo("assets/audio/songs/nrgq.wav");
-        
     }
 }

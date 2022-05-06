@@ -22,10 +22,12 @@ public class AudioEventLL {
             this.volume = volume;
         }
     }
+    public boolean end;
     AudioEvent head; 
     public AudioEvent pop(){
         if(head == null ){
-            throw new EndOfLinkedList();
+            end = true;
+            return blank;
         }
         AudioEvent tmp = head;  
         head = head.next;

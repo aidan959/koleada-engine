@@ -16,11 +16,11 @@ public class AudioSync {
     public SongInfo songInfo;
     public float magnitude;
     public enum songParts{
-        INTRO(0),
-        VERSE1(1305290L),
+        INTRO        (0L),
+        VERSE1 (1305290L),
         BRIDGE1(3214644L),
         CHORUS1(4327088L),
-        VERSE2(6238896L),
+        VERSE2 (6238896L),
         BRIDGE2(8798316L),
         CHORUS2(9898417L),
         ;
@@ -50,7 +50,11 @@ public class AudioSync {
     public int beatCount = 0;
     public long totalDifference;
     public AudioEvent prev ;
+    
     public AudioEvent isBeat(){
+        if(songInfo.eventList.end){
+            return songInfo.eventList.blank;
+        }
         this.wasBeat = false;
         missedFrameCounter = -1;
         lastEvent = songInfo.eventList.blank;
@@ -60,7 +64,8 @@ public class AudioSync {
             return songInfo.eventList.blank;
         }
         // otherwise it gets updated
-        while(peekFrame.frame < song.positionFrame() ){
+        if(peekFrame.frame < song.positionFrame() ){
+            
             peekFrame = peekNext();
             missedFrameCounter++;
             beatCount++;

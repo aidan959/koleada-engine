@@ -5,12 +5,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
 
-
-import ie.engine.loading.aubioclone.*;
-
-import processing.core.PApplet;
 import processing.sound.*;
 
 public class SongAlyzer {

@@ -3,7 +3,6 @@ package ie.engine;
 import java.util.ArrayList;
 import java.util.List;
 
-import processing.core.PApplet;
 import java.util.concurrent.*;
 
 import ie.engine.implementations.AudioEventLL;
@@ -85,16 +84,6 @@ public class NRGQAnim extends Scene{
     
     // holds the song information
     SongInfo songInfo;
-    
-    public void generateBugLocations(){
-        float[] randomX = randomNumberGen.generateUniqueSet(0, width, numBugs, this);
-        float[] tempLocationY =  randomNumberGen.generateUniqueSet(0, height/2f, numBugs, this);
-        
-        // spawns d bugs
-        for(int i=0; i< numBugs; i++){
-            //enemyBugs.add(new Bug(new Coordinate(randomX[i], tempLocationY[i]), 100, 1, this));
-        }
-    }
     
     public void setupMenu(){
         // button coords

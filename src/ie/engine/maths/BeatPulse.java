@@ -9,6 +9,10 @@ public class BeatPulse {
         this.scene = scene;
     }
     public float process(){
-        return PApplet.map(scene.audioSync.song.positionFrame() - scene.lastEvent.frame, 0, scene.audioSync.peekNext().frame - scene.lastEvent.frame, 0, 2* PApplet.PI );
+        // System.out.println(PApplet.map(scene.audioSync.song.positionFrame() - scene.lastEvent.frame, 0, scene.audioSync.peekNext().frame - scene.lastEvent.frame, 0, 1 ));
+        return PApplet.map(scene.audioSync.song.positionFrame(), scene.lastEvent.frame, scene.audioSync.peekNext().frame , 0, 1 );
+    }
+    public float processSin(){
+        return PApplet.sin(PApplet.degrees(PApplet.map(scene.audioSync.song.positionFrame(), scene.lastEvent.frame, scene.audioSync.peekNext().frame , 0, 360 )));
     }
 }

@@ -1,7 +1,6 @@
 package ie.engine.implementations;
 // Sorted linked list with a sentinel node
 // Skeleton code
-import java.util.Scanner;
 
 public class SortedLL
 {
@@ -50,13 +49,10 @@ public class SortedLL
     
     
     public boolean remove(int x) {
-        Node prev;
         Node curr = head;
         while(curr.data != x && curr.next != null){
-            prev = curr;
             curr = curr.next;
             if(curr.data == x){
-                prev = curr.next;
                 return true;
             }
         }
@@ -83,8 +79,6 @@ public class SortedLL
     {
         SortedLL list = new SortedLL();
 
-        double x;
-        int i, r;
         list.insert(10);
         list.insert(15);
 

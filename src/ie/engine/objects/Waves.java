@@ -1,7 +1,5 @@
 package ie.engine.objects;
 
-import java.time.chrono.HijrahEra;
-import java.util.ArrayList;
 
 import ie.engine.maths.Coordinate;
 import processing.core.PApplet;
@@ -40,12 +38,15 @@ public class Waves {
         }
         public void draw(){
             pa.fill(0,0);
-            pa.stroke(124);
-            pa.ellipse(this.coord.x, yOffset + overlapSines(this.coord.x), 5, 5);
-
+            // pa.stroke(124);
+            // pa.ellipse(this.coord.x, yOffset + overlapSines(this.coord.x), 5, 5);
+            pa.pushMatrix();
             pa.fill(0,0);
-            pa.stroke(0x00,0x33,0xbb);
-            pa.ellipse(this.coord.x, this.coord.y + overlapSines(this.coord.x), 5, 5);
+            pa.noStroke();
+            // pa.stroke(0x00,0x33,0xbb);
+            pa.translate(this.coord.x, this.coord.y + overlapSines(this.coord.x), this.coord.z);
+            pa.sphere(5);
+            pa.popMatrix();
         }
 
     } 
@@ -56,8 +57,10 @@ public class Waves {
             wavePoints[i] = new Point(new Coordinate(i / (float)numPoints * pa.width, yOffset, i/(float)numPoints * pa.width), new Coordinate(0, 0,0), 1f);
         }
     }
-    public void updatePoints(){
-        int randomIteration = (int)pa.random(0, iterations);
+    public int randomValue;
+    public void updatePoints(boolean wasBeat){
+        randomValue =  (int)(Math.random() * numPoints);
+        // int randomIteration = (int)pa.random(0, iterations);
         for(var i = 0; i < iterations; i++){
             for(int j = 0; j <numPoints; j ++){
                 
@@ -65,8 +68,6 @@ public class Waves {
                 float force = 0;
                 float forceFromLeft;
                 float forceFromRight;
-                float forceFromBack;
-                float forceFromFront;
                 if(j==0){
                     float dy = wavePoints[wavePoints.length -1].coord.y - p.coord.y;
                     forceFromLeft = springConstant * dy;
@@ -87,7 +88,23 @@ public class Waves {
                 float acceleration = force/ p.mass;
                 p.speed.y = damping * p.speed.y + acceleration;
                 p.coord.y += p.speed.y;
+                p.coord.z += p.speed.y/2;
+                if(wasBeat){
+                    if(j == randomValue){
+                        p.coord.y *= 1.1;
+                        p.coord.z *= 1.01;   
 
+                    }
+                    if(j == ((randomValue * 2) % numPoints) ){
+                        p.coord.y *= -1.1;
+                        p.coord.z *= 1.01;   
+
+                    }
+                    if(j == ((randomValue * 3) % numPoints) ){
+                        p.coord.y *= 1.1;
+                        p.coord.z *= 1.01;   
+                    }
+                }
                 // if(randomIteration == j){
                 //     force *= 3;
                 //     acceleration = force/ p.mass;
@@ -121,7 +138,7 @@ public class Waves {
         }
         return result;
     }
-    public void update(float dt){
+    public void update(boolean wasBeat){
         offset += 1;
         // for(int i = -0; i< backgroundWaves; i++){
         //     sineOffsets[i] = (float)(-Math.PI + 2 * Math.PI * Math.random());
@@ -129,7 +146,7 @@ public class Waves {
         //     sineStretch[i] = (float)Math.random() * backgroundWaveCompression;
         //     offsetStretches[i] = (float)Math.random() * backgroundWaveCompression;
         // }
-        updatePoints();
+        updatePoints(wasBeat);
     }
     public void draw(){
         pa.stroke(0xff, 0x33, 0x33, 0x40);
@@ -137,19 +154,9 @@ public class Waves {
         
         for(int i = 0; i < numPoints; i++){
             wavePoints[i].draw();
-            if(i == 0){
-
-            } else {
-                pa.line(wavePoints[i-1].coord.x, wavePoints[i-1].coord.y + overlapSines(wavePoints[i-1].coord.x), wavePoints[i].coord.x,wavePoints[i].coord.y + overlapSines(wavePoints[i].coord.x));
+            if(i != 0){
+                pa.line(wavePoints[i-1].coord.x, wavePoints[i-1].coord.y + overlapSines(wavePoints[i-1].coord.x), wavePoints[i-1].coord.z, wavePoints[i].coord.x,wavePoints[i].coord.y + overlapSines(wavePoints[i].coord.x), wavePoints[i].coord.z );
             }
         }
-        
-        pa.fill(255);
-        pa.pushMatrix();
-        pa.translate(pa.width * .5f, pa.height*.5f,0f);
-        pa.rotateY(PApplet.map(pa.mouseX,0f,pa.width,-PApplet.PI,PApplet.PI));
-        pa.rotateX(PApplet.map(pa.mouseY,0f,pa.height,-PApplet.PI,PApplet.PI));
-        pa.text("foo!", -20, 0, 20);
-        pa.popMatrix();
         }
 }

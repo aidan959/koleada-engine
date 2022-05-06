@@ -1,6 +1,5 @@
 package ie.engine.maths;
 
-import java.security.Key;
 
 public class Animation {
     int size, counter;
