@@ -21,9 +21,10 @@ public class BenTesting extends Scene{
         audioSync.play();
         songInfo = new SongInfo(songName);
         lastEvent = audioSync.songInfo.eventList.blank;
-        // bridge to chorus -- will start from bridge1
+        // bridge to chorus -- will start from chorus 1
         audioSync.song.jumpFrame((int)AudioSync.songParts.CHORUS1.get());
         colorMode(HSB);
+
 
     }
 
@@ -36,10 +37,6 @@ public class BenTesting extends Scene{
     float angle;
     float jitter;
     int i;
-
-
-
-    
 
     public void draw(){
         super.draw();
@@ -57,43 +54,31 @@ public class BenTesting extends Scene{
         
         int currentFrame = audioSync.song.positionFrame();
 
-
+        // to illustrate sphere 
         pushMatrix();
-        float d = map(sphereCentre, 0, sphereCentre, 0, random(255)) % 256;
-        fill(d);
-        lights();
-        sphere(sphereCentre);
-        popMatrix();
-
-        /*
-        pushMatrix();
+        stroke(random(255), random(255), random(255));
         noFill();
-        stroke(0, 255, 255);
         sphere(sphereCentre);
         popMatrix();
-        */
-
-
-    
-        
-            // for 2nd beat drop of song
+     
+        // for 2nd beat drop of song
         if (currentFrame > 4984496 ){
             for(int i = 0; i < box ;i++){
                 for(int j = 0; j < box; j++)
                 {
                     fill(map(i, 0, box, 0, 255),255, 255);
                     pushMatrix();
-                    // RGBColor b = RGBColor.toRGB((int)(map(sin(angle*5), -1, 1, 0, 255)), 255, 255, this);
-                
+
+                    // controls the small beat wave 
                     if (second() % 10 == 0) {  
                         jitter = random(-1, 0);
                     }
+                    
                 
                     angle = angle + jitter;
                     float c = tan(angle);
-                    //translate(width*i/2, height*i/2, -100);
                     noStroke();
-                    // stroke(b.r, b.g, b.b);
+
                     rotate(c);
                     rotateY(9);
                     rotateX(5); 
@@ -109,7 +94,6 @@ public class BenTesting extends Scene{
                     {
                         fill(map(i, 0, box, 0, 255),255, 255);
                         pushMatrix();
-                        // RGBColor b = RGBColor.toRGB((int)(map(sin(angle*5), -1, 1, 0, 255)), 255, 255, this);
                 
                         if (second() % 2 == 0) {  
                             jitter = random(-2, 0);
@@ -117,9 +101,7 @@ public class BenTesting extends Scene{
                 
                         angle = angle + jitter;
                         float c = tan(angle);
-                        //translate(width*i/2, height*i/2, -100);
                         noStroke();
-                        // stroke(b.r, b.g, b.b);
                         rotate(c);
                         rotateY(9);
                         rotateX(5); 
@@ -142,9 +124,7 @@ public class BenTesting extends Scene{
                         }
         
                         angle = angle + jitter;
-                        float c = tan(angle);
-        
-                        //translate(width*i/2, height*i/2, -100);
+                        float c = tan(angle);       
         
                         rotate(c);
                         rotateY(9);
@@ -164,7 +144,6 @@ public class BenTesting extends Scene{
                 {
                     fill(map(i, 0, box, 0, 255),255, 255);
                     pushMatrix();
-                    // RGBColor b = RGBColor.toRGB((int)(map(sin(angle*5), -1, 1, 0, 255)), 255, 255, this);
             
                     if (second() % 10 == 0) {  
                         jitter = random(-1, 0);
@@ -172,9 +151,7 @@ public class BenTesting extends Scene{
             
                     angle = angle + jitter;
                     float c = tan(angle);
-                    //translate(width*i/2, height*i/2, -100);
                     noStroke();
-                    // stroke(b.r, b.g, b.b);
                     lerp(box, (tempEvent.volume * 10000) + 100, 0.05f );
                     rotate(c);
                     rotateY(9);
@@ -186,31 +163,31 @@ public class BenTesting extends Scene{
                     
                 }
             }
-            for(int i = 0; i < centrebox ;i++){
-                for(int j = 0; j < centrebox; j++)
-                {
-                    fill(map(i, 0, centrebox, 0, 255),255, 255);
-                    pushMatrix();
+        for(int i = 0; i < centrebox ;i++){
+            for(int j = 0; j < centrebox; j++)
+            {
+                fill(map(i, 0, centrebox, 0, 255),255, 255);
+                pushMatrix();
     
-                    if (second() % 2 == 0) {  
-                        jitter = random(-1, 0);
-                    }
-    
-                    angle = angle + jitter;
-                    float c = tan(angle);
-    
-                    //translate(width*i/2, height*i/2, -100);
-                    rotate(c);
-                    rotateY(9);
-                    rotateX(5); 
-                    translate(width/2, height/2, -400);     
-                    box(centrebox);
-                    popMatrix(); 
-                    
-                    
+                if (second() % 2 == 0) {  
+                    jitter = random(-1, 0);
                 }
+    
+                angle = angle + jitter;
+                float c = tan(angle);
+    
+
+                rotate(c);
+                rotateY(9);
+                rotateX(5); 
+                translate(width/2, height/2, -400);     
+                box(centrebox);
+                popMatrix(); 
+                    
+                    
             }
         }
+    }
             
 
         
@@ -244,16 +221,6 @@ public class BenTesting extends Scene{
         } else {
              
             angle += 0.02f;
-            /*
-            smoothBackground = lerp(0.8f,0, smoothBackground );
-            pushMatrix();
-            stroke(0, 100, 255); //change the edges' colour
-            fill(0, 0, 255); //fill the `box` in a blue colour
-            box(box); 
-            popMatrix();
-            */
-
-             // fill(map(sin(angle), -1, 1, 0, 255), map(sin(angle*5), -1, 1, 0, 255), map(sin(angle), -1, 1, 0, 255));
         }
         // System.out.println(bp.process());
         
