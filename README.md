@@ -16,7 +16,7 @@ In this assignment I am most proud of my dancing cubes. They have probably taken
 
 Student Number = C20366426
 Student Name = Ben O'Brien
-
+---
 For my visual portion of the assignment, I wanted to try creating a wave of colour which surrounded a particular shape, in this case, the shape being a sphere. I wanted to create a visual which would change based on a certain beat that would change the initial ring into a wave. The size of the sphere and the surrounding rings and waves ultimately changed based on the beat of the song.
 
 In order to detect the beat, I used a variable called currentFrame.
