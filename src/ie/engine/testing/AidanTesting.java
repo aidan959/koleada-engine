@@ -26,31 +26,20 @@ public class AidanTesting extends Scene {
         songInfo = new SongInfo(songName);
 
         lastEvent = audioSync.songInfo.eventList.blank;
-
-        KeyFrame[] frames = new KeyFrame[4];
-        frames[0] = new KeyFrame(0, new Coordinate(0, 0, 0));
-        frames[1] = new KeyFrame(100000, new Coordinate(15, 15, 15));
-        frames[2] = new KeyFrame(600000, new Coordinate(10, 10, 10));
-        frames[3] = new KeyFrame(1000000, new Coordinate(20, 20, 20));
-
         lyricSync = new LyricSync(this, audioSync);
-
-        testAnimation = new Animation(4, frames);
         ps = new ParticleSystem(new Coordinate(width, height), new Coordinate(1/4f,1/2f), this);
         ps2 = new ParticleSystem(new Coordinate(width, height), new Coordinate(3/4f,1/2f), this);
-        wavey = new Waves(this);
-        audioSync.play();
+
         lyricSync.listOfEvents.clear();
         myFont = createFont("assets/fonts/Manrope-Regular.ttf", 100, true);
         textFont(myFont);
         debugDictionary.put("bp", new DebugObject<>("bp.process()", 0, ""));
         debugDictionary.put("bp2", new DebugObject<>("bp.processSin()", 0, ""));
         debugDictionary.put("fov", new DebugObject<>("fov", 0, "°"));
-
-        // jumpTo(3214854);
+        audioSync.song.play();
 
     }
-
+    
     ParticleSystem ps;
     ParticleSystem ps2;
 

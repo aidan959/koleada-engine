@@ -1,6 +1,7 @@
 package ie.engine.testing;
 
 
+import ie.engine.NRGQAnim;
 import ie.engine.Scene;
 import ie.engine.implementations.AudioEventLL.AudioEvent;
 import ie.engine.interaction.AudioSync;
@@ -22,7 +23,7 @@ public class TweedyNS extends Scene{
         songInfo = new SongInfo(songName);
         lastEvent = audioSync.songInfo.eventList.blank;
         // bridge to chorus -- will start from bridge2
-        // audioSync.song.jumpFrame((int)AudioSync.songParts.BRIDGE2.get());
+        audioSync.song.jumpFrame((int)AudioSync.songParts.BRIDGE2.get());
     }
 
     float lerpValue;

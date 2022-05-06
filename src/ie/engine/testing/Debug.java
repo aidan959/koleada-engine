@@ -10,7 +10,7 @@ import processing.core.PApplet;
 public class Debug {
     PApplet pa;
     public float frameTime;
-    boolean doDebug = false;
+    public boolean doDebug = false;
     public HashMap<String, DebugObject<Object>> debugMap;
     public Debug(Scene pa, Map<String, DebugObject<Object>> debugMap){
         this.pa = pa;

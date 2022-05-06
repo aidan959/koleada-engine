@@ -25,8 +25,8 @@ public class LyricEventLL {
     public LyricEventLL(PApplet pa){
         this.pa = pa;
         blank = new LyricEvent(0,"", new Coordinate(0, 0, 0), 0, 0,0);
-        defaultX = pa.width;
-        defaultY = pa.height;
+        defaultX = 480;
+        defaultY = 480;
     }
     public class LyricEvent{
         public LyricEvent next;

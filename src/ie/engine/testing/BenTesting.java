@@ -1,6 +1,7 @@
 package ie.engine.testing;
 
 
+import ie.engine.NRGQAnim;
 import ie.engine.Scene;
 import ie.engine.implementations.AudioEventLL.AudioEvent;
 import ie.engine.interaction.AudioSync;
