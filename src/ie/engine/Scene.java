@@ -28,7 +28,8 @@ public class Scene extends PApplet {
     public AudioEvent lastEvent;
     public HashMap<String, DebugObject<Object>> debugDictionary;
     public void settings(){
-        size(480, 480, P3D);
+        size(1280, 720, P3D);
+        // size(480, 480, P3D);
     }
     public void draw(){
         debugger.start();

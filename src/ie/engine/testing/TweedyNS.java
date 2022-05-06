@@ -14,13 +14,18 @@ public class TweedyNS extends Scene{
     public void settings(){
         super.settings();
     }
+
     public void setup(){
         super.setup();
+        w = width;
+        h = height;
+
         String songName = "assets/audio/songs/nrgq.wav";
         audioSync = new AudioSync(this, songName);
         audioSync.play();
         songInfo = new SongInfo(songName);
         lastEvent = audioSync.songInfo.eventList.blank;
+        pre();
         // bridge to chorus -- will start from bridge2
         // audioSync.song.jumpFrame((int)AudioSync.songParts.BRIDGE2.get());
     }
@@ -39,8 +44,23 @@ public class TweedyNS extends Scene{
     int circles = 1;
     int numCircles = 9;
     int circlecol = 0;
+    float resolutionScaleX;
+    float resolutionScaleY;
+    int defaultWidth = 480;
+    int defaultHeight = 480;
+    int w;
+    int h;
     
     public float border = 0;
+
+    public void pre(){
+        if(w!=width || h!=height){  
+            resolutionScaleX = width/defaultWidth;
+            resolutionScaleY = height/defaultHeight;
+            w = width;
+            h = height;
+        }
+    }
 
     public void draw(){
         super.draw();
@@ -65,7 +85,7 @@ public class TweedyNS extends Scene{
 
             if (circles > 9 && currentFrame >= 9341420) { // when circles appear they start at 1
                 circles = 1;
-                multiplier = 4.5f;
+                multiplier = 6.5f;
             } else {
                 circles++;
                 multiplier-= 0.25f; // decreases circles radius multiplier the more that are added
@@ -132,7 +152,7 @@ public class TweedyNS extends Scene{
                     float mapY = map(j, 0, numCircles, 0, height);
                     
                     pushMatrix();
-                    translate(mapX+25, mapY+25);
+                    translate((mapX+70), (mapY+40));
                     sphere(5+smoothCircle*1.2f);
                     popMatrix();
                 }
@@ -149,7 +169,7 @@ public class TweedyNS extends Scene{
                     rectMode(CENTER);
                     RGBColor c = RGBColor.toRGB((int)((map(sin(angle*(i+j+1)), -1, 1, 0, 255))+smoothColor), 255, 255, this);
                     noFill();
-                    translate(width*i/4, height*j/4, map(sin(angle), -1, 1, -400, -10));
+                    translate(width*i/4, height*j/4, map(sin(angle*6), -1, 1, -400, -10));
                     rotate(sin(angle)*2);
                     rotateY(angle*sin(j));
                     rotateZ(sin(angle));
@@ -158,7 +178,8 @@ public class TweedyNS extends Scene{
                         rotate(cos(angle)*2);
                         rotateY(angle*sin(j));
                         rotateZ(angle);
-                        box((int)(70*(i/0.2)));
+                        // box((int)(70*(i/0.2)));
+                        box((int)(70*(i/random(0.25f, 0.275f))));
                     } else if (currentFrame < 11172844) {
                         strokeWeight(4);
                         stroke(255);   
@@ -172,7 +193,7 @@ public class TweedyNS extends Scene{
 
                     // smaller cubes
                     pushMatrix();
-                    translate(width*i/4, height*j/4, map(sin(angle), -1, 1, -400, -10));
+                    translate(width*i/4, height*j/4, map(sin(angle*6), -1, 1, -400, -10));
                     rotate(sin(angle)*4);
                     rotateY(angle*3);
                     rotateZ(cos(angle*2));
