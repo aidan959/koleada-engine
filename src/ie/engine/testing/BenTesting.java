@@ -47,8 +47,8 @@ public class BenTesting extends Scene{
         tempEvent = audioSync.isBeat();
         wasBeat = audioSync.wasBeat;
         background(0,0, smoothBackground);
-        box = lerp(box, (tempEvent.volume * 400) + 20, 0.05f );
-        centrebox = lerp(centrebox, (tempEvent.volume * 600) + 25, 0.05f );
+        box = lerp(box, (tempEvent.volume * 400) + 10, 0.05f );
+        centrebox = lerp(centrebox, (tempEvent.volume * 700) + 20, 0.05f );
         sphereCentre = lerp(sphereCentre, (tempEvent.volume * 8000) + 100, 0.05f );
        
         
