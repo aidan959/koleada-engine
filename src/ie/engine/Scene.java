@@ -22,8 +22,11 @@ public class Scene extends PApplet {
     public AudioEvent lastEvent;
     public HashMap<String, DebugObject<Object>> debugDictionary;
     public int currentFrame;
+    // original width and height used to scale
+    public int w,h;
     public void settings(){
         size(480, 480, P3D);
+        
     }
     public void draw(){
         debugger.start();
@@ -31,6 +34,9 @@ public class Scene extends PApplet {
     }
     public void setup(){
         frameRate(60);
+        w = width;
+        h = height;
+        surface.setResizable(true);
         textMode(MODEL);
         debugDictionary = new HashMap<String, DebugObject<Object>>();
         debugDictionary.put("frametime", new DebugObject<>("frametime", 0, "ms"));

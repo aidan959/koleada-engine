@@ -1,6 +1,6 @@
 package ie.engine.implementations;
 
-class EndOfLinkedList extends RuntimeException{
+class EndOfLinkedListRE extends RuntimeException{
 
 }
 public class AudioEventLL {

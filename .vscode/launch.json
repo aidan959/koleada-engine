@@ -4,12 +4,5 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        {
-            "type": "java",
-            "name": "Launch AidanTesting",
-            "request": "launch",
-            "mainClass": "ie.engine.testing.AidanTesting",
-            "projectName": "koleada-engine_77869aa"
-        }
     ]
 }

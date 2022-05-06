@@ -7,15 +7,26 @@ import java.io.IOException;
 import ie.engine.maths.Coordinate;
 import processing.core.PApplet;
 
-class EndOfLinkedList extends RuntimeException{
+class EndOfLyricLinkedList extends RuntimeException{
 
 }
 public class LyricEventLL {
     public LyricEvent blank;
     PApplet pa;
+    private float lyricScaleX = 1;
+    private float lyricScaleY = 1;
+
+    private int defaultX;
+    private int defaultY;
+    public void updateScale(){
+        lyricScaleX = (float)pa.width/(float)defaultX;
+        lyricScaleY = (float)pa.height/(float)defaultY; 
+    }
     public LyricEventLL(PApplet pa){
         this.pa = pa;
         blank = new LyricEvent(0,"", new Coordinate(0, 0, 0), 0, 0,0);
+        defaultX = pa.width;
+        defaultY = pa.height;
     }
     public class LyricEvent{
         public LyricEvent next;
@@ -31,7 +42,7 @@ public class LyricEventLL {
         public int timeToDie = 100;
         public int frame;
         private float textSize1;
-        
+        private float scaledTextSize;
         public LyricEvent(int frame, String lyric, Coordinate origin, float textSize, float rotation, int timeToDie){
 
             this.frame = frame;
@@ -41,6 +52,7 @@ public class LyricEventLL {
             this.rotation = rotation;
             this.timeToDie = timeToDie;
             this.textSize1 = textSize;
+            
             pa.pushMatrix();
             pa.textSize(textSize);
             width = pa.textWidth(lyric);
@@ -49,12 +61,12 @@ public class LyricEventLL {
         }
         public void draw(float scale){
             pa.pushMatrix();
-            
+            scaledTextSize = textSize * ((lyricScaleX + lyricScaleY)/2);
             if(scale != 1){
-                float mappedSize  =PApplet.map(scale, 0,1,textSize,textSize+5);
+                float mappedSize  =PApplet.map(scale, 0,1,scaledTextSize,textSize+5);
                 textSize1 = PApplet.lerp(textSize1,mappedSize, 0.1f );
             } else{
-                textSize1 = textSize;
+                textSize1 = scaledTextSize;
             }
             pa.textSize(textSize1);
             height = pa.textAscent() + textSize1*0.25f;
@@ -62,8 +74,8 @@ public class LyricEventLL {
             pa.textAlign(processing.core.PConstants.CENTER);
             // pa.fill(0);
             // pa.text(lyric, PApplet.map(origin.x,0,480,0,pa.width), PApplet.map(origin.y,0,480,0,pa.width));
-            float x = PApplet.map(origin.x,0,480,0,pa.width);
-            float y = PApplet.map(origin.y,0,480,0,pa.width);
+            float x = origin.x * lyricScaleX;
+            float y = origin.y  * lyricScaleY;
             pa.fill(255,0,0);
             pa.translate(x, y);
             pa.rotate(PApplet.radians(rotation));
