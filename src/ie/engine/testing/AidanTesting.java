@@ -36,8 +36,8 @@ public class AidanTesting extends Scene {
         lyricSync = new LyricSync(this, audioSync);
 
         testAnimation = new Animation(4, frames);
-        ps = new ParticleSystem(new Coordinate(width / 4f, height / 2f), this);
-        ps2 = new ParticleSystem(new Coordinate((3 * width) / 4f, height / 2f), this);
+        ps = new ParticleSystem(new Coordinate(width, height), new Coordinate(1/4f,1/2f), this);
+        ps2 = new ParticleSystem(new Coordinate(width, height), new Coordinate(3/4f,1/2f), this);
         wavey = new Waves(this);
         audioSync.play();
         lyricSync.listOfEvents.clear();
@@ -45,6 +45,8 @@ public class AidanTesting extends Scene {
         textFont(myFont);
         debugDictionary.put("bp", new DebugObject<>("bp.process()", 0, ""));
         debugDictionary.put("bp2", new DebugObject<>("bp.processSin()", 0, ""));
+        debugDictionary.put("fov", new DebugObject<>("fov", 0, "°"));
+
         // jumpTo(3214854);
 
     }
@@ -61,19 +63,21 @@ public class AidanTesting extends Scene {
 
     public void pre() {
         // ran at the start of the scene to ensure scaling for text works when full screening etc
-        lyricSync.lyricLL.updateScale();
         if (w != width || h != height) {
+            lyricSync.lyricLL.updateScale();
+            ps.updatePositions();
+            ps2.updatePositions();
             w = width;
             h = height;
         }
     }
-    int fov;
+    int fov = 65;
     @Override
     public void draw() {
         pre();
         super.draw();
         camera();
-        perspective(radians(90%180), ((float)width/(float)height),0.00001f, 1000);
+        perspective(radians(fov%180), ((float)width/(float)height),0.00001f, 1000);
         //this fades the end of the scene to the start of the next one -> will need to be positioned correctly when moving between each persons scenes
         if (currentFrame > 4288737) {
             background(map(currentFrame, 4288737, AudioSync.songParts.CHORUS1.get(), 0, 255));
@@ -99,7 +103,7 @@ public class AidanTesting extends Scene {
         // intro
         if (currentFrame < AudioSync.songParts.VERSE1.get()) {
 
-            lightning(width / 2f, height / 2f, 10, map(currentFrame, 0, AudioSync.songParts.VERSE1.get(), 0, 100),
+            lightning(width / 2f, (height) / 4f, 10, map(currentFrame, 0, AudioSync.songParts.VERSE1.get(), 0, 100),
                     cos(degrees(angle)), true);
             storm(width / 4f, height / 2f, 15, map(currentFrame, 0, AudioSync.songParts.VERSE1.get(), 0, 100),
                     sin(degrees(angle)), true, 1, false);
@@ -108,13 +112,26 @@ public class AidanTesting extends Scene {
 
             // verse
         } else if (currentFrame < AudioSync.songParts.BRIDGE1.get()) {
-            lightning(width / 2f, height / 2f, 10, width / 2f * sin(bp.process()), cos(degrees(angle)), true);
+            lightning(width / 2f, (height) / 4f, 10, width / 2f * sin(bp.process()), cos(degrees(angle)), true);
             storm(width / 4f, height / 2f, 15, map(currentFrame, 0, AudioSync.songParts.VERSE1.get(), 0, 100),
                     sin(degrees(angle)), true, smoothTubes, false);
             storm((width * 3) / 4f, height / 2f, 15, map(currentFrame, 0, AudioSync.songParts.VERSE1.get(), 0, 100),
                     sin(degrees(angle)), true, smoothTubes, true);
+            if(wasBeat){
+                for(int i = 0; i < 4; i++){
+                    ps.addParticle(new Coordinate(0, 10f * i, 0), new Coordinate(0.5f, 0, 5f),
+                    new Coordinate(5, 5, 5));
+                    ps2.addParticle(new Coordinate(0, 10f * i, 0), new Coordinate(-0.5f, 0,
+                5f), new Coordinate(-5, 5, 5));
+                }
+            }
             // bridge
         } else if (currentFrame < AudioSync.songParts.CHORUS1.get()) {
+            if(currentFrame > 4288737)
+                fov = (int)map(currentFrame,4288737, AudioSync.songParts.CHORUS1.get(),0,65);
+            else if(currentFrame > 3872222){
+                fov = (int)map(currentFrame,3872222, 4288737,65,0);
+            } 
             // creates our nested circles
             pushMatrix();
             stroke(255);
@@ -126,7 +143,10 @@ public class AidanTesting extends Scene {
                 circleMap = map(currentFrame, 4288737, AudioSync.songParts.CHORUS1.get(), width, 0);
             }
             // increasesthe number of circles gradually -> limit should be 48 (depending on resolution - may add an upper limit (rendering this in 4k would lead to 384 circles lol)) 
-            for (int i = 1; i < (int) (circleMap / 10); i++) {
+            int numCircles = (int) circleMap/10;
+            numCircles = numCircles > 70 ? 70: numCircles;
+
+            for (int i = 1; i < numCircles; i++) {
                 // TODO: may update to tweedy HSB color converter to make this a nice looking gradient?
                 // we'll see!
                 fill((circleMap) % 255, (circleMap * i) % 255, (circleMap * (i + 1)) % 255);
@@ -139,19 +159,12 @@ public class AidanTesting extends Scene {
         }
         if (wasBeat) {
             lastEvent = tempEvent;
-
-            for(int i = 0; i < 4; i++){
-                ps.addParticle(new Coordinate(0, 10f * i, 0), new Coordinate(0.5f, 0, 5f),
-                new Coordinate(5, 5, 5));
-                ps2.addParticle(new Coordinate(0, 10f * i, 0), new Coordinate(-0.5f, 0,
-             5f), new Coordinate(-5, 5, 5));
-
-            }
         }
         // wavey.update(wasBeat);
         ps.run();
         ps2.run();
         camera();
+        //perspective();
         hint(DISABLE_DEPTH_TEST);
         noLights();
         // backwards traversal to allow active removal
@@ -182,7 +195,8 @@ public class AidanTesting extends Scene {
             debugDictionary.get("nextframe").updateValue(audioSync.peekNext().frame);
             debugDictionary.get("bp").updateValue(regLoop);
             debugDictionary.get("bp2").updateValue(sinLoop);
-            // System.out.println(sinLoop);
+            debugDictionary.get("fov").updateValue(fov);
+
 
             debugger.draw();
         }
@@ -242,7 +256,8 @@ public class AidanTesting extends Scene {
         // allows to hop forward to next lyric
         else if (key == 'p') jumpTo(lyricSync.lyricLL.peek().frame - 100);
         // TODO: REMOVE AFTER TESTING
-        else if(key=='q') fov++;
+        else if(key=='q') fov+=5;
+        else if(key=='z') fov-=5;
     }
 
     public void jumpTo(int positionFrame) {

@@ -9,9 +9,16 @@ import processing.core.PApplet;
 public class ParticleSystem {
     ArrayList<Particle> particles;
     Coordinate center;
+    Coordinate origin;
+    Coordinate offset;
+    
     PApplet pa;
-    public ParticleSystem(Coordinate center, PApplet pa){
+    public ParticleSystem(Coordinate center, Coordinate offsetS, PApplet pa){
+        this.origin = center;
+        this.offset = offsetS;
         this.center = center.duplicate();
+        center.multiply(offsetS);
+        
         particles = new ArrayList<Particle>(5);
         this.pa = pa;
     }
@@ -23,6 +30,11 @@ public class ParticleSystem {
                 particles.remove(i);
             }
         }
+    }
+    public void updatePositions(){
+        this.center.x = pa.width * offset.x;
+        this.center.y = pa.height * offset.y; 
+
     }
     public void addParticle() {
         Particle p;

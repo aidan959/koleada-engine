@@ -27,6 +27,7 @@ public class Debug {
         frameTime = (System.nanoTime() - frameTime) / (float)1000000.0;
         pa.fill(200);
         pa.textSize(15);
+        pa.textAlign(PApplet.LEFT);
         int i = 0;
         for(DebugObject<Object> dObject : debugMap.values()){
             pa.text(dObject.toString() , 5f , 15 + (i++ * 15f));  // Text wraps within text box

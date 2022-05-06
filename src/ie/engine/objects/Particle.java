@@ -10,9 +10,9 @@ public class Particle {
     float lifespan;
     PApplet pa;
     public Particle(Coordinate center, PApplet pa) {
-      acceleration = new Coordinate(0, 0f, -0.5f);
+      acceleration = new Coordinate(0, 0f, -0.25f);
       this.pa = pa;
-      velocity = new Coordinate(5, 5, 5);
+      velocity = new Coordinate(2.5f, 2.5f, 2.5f);
       position = center.duplicate();
       lifespan = 100.0f;
     }
@@ -39,8 +39,8 @@ public class Particle {
     // Method to display
     public void display() {
         pa.pushMatrix();
-        pa.stroke(255, lifespan);
-        pa.fill(255, lifespan);
+        //pa.stroke(255, lifespan);
+        pa.fill(255,0,0, lifespan);
         pa.translate(position.x, position.y, position.z);
         pa.box(8);
         pa.popMatrix();
