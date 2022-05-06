@@ -58,46 +58,52 @@ public class AidanTesting extends Scene {
     Animation testAnimation;
     float smoothBackground;
     float smoothTubes;
-    boolean wasLyric;
 
     public void pre() {
+        // ran at the start of the scene to ensure scaling for text works when full screening etc
         lyricSync.lyricLL.updateScale();
         if (w != width || h != height) {
             w = width;
             h = height;
         }
     }
-
+    int fov;
     @Override
     public void draw() {
         pre();
         super.draw();
-        // clear();
         camera();
+        perspective(radians(90%180), ((float)width/(float)height),0.00001f, 1000);
+        //this fades the end of the scene to the start of the next one -> will need to be positioned correctly when moving between each persons scenes
         if (currentFrame > 4288737) {
             background(map(currentFrame, 4288737, AudioSync.songParts.CHORUS1.get(), 0, 255));
+            
         } else {
             background(0, 0, smoothBackground);
         }
+        // this is used to check if there was a lyric to display this frame
         tempLyricEvent = lyricSync.isLyric();
-        wasLyric = lyricSync.wasLyric;
         tempEvent = audioSync.isBeat();
+        // returns a value that bounces between beats from -1 -> 1
         float sinLoop = bp.processSin();
         float regLoop = bp.process();
 
+        // returns true if there was a beat
         wasBeat = audioSync.wasBeat;
-        wavey.draw();
+        // when 3d rendering this removes the wireframe
         noStroke();
+        // used for sin function to change values
         angle += 0.002f;
-
+        // this is ued to pulse and smoothen the changes to the size of the storm
         smoothTubes = lerp(smoothTubes, (tempEvent.volume * 1000) + 5, 0.005f);
         // intro
         if (currentFrame < AudioSync.songParts.VERSE1.get()) {
+
             lightning(width / 2f, height / 2f, 10, map(currentFrame, 0, AudioSync.songParts.VERSE1.get(), 0, 100),
                     cos(degrees(angle)), true);
-            storm(width / 4f, height / 2, 15, map(currentFrame, 0, AudioSync.songParts.VERSE1.get(), 0, 100),
+            storm(width / 4f, height / 2f, 15, map(currentFrame, 0, AudioSync.songParts.VERSE1.get(), 0, 100),
                     sin(degrees(angle)), true, 1, false);
-            storm((width * 3) / 4f, height / 2, 15, map(currentFrame, 0, AudioSync.songParts.VERSE1.get(), 0, 100),
+            storm((width * 3) / 4f, height / 2f, 15, map(currentFrame, 0, AudioSync.songParts.VERSE1.get(), 0, 100),
                     sin(degrees(angle)), true, 0, true);
 
             // verse
@@ -109,35 +115,40 @@ public class AidanTesting extends Scene {
                     sin(degrees(angle)), true, smoothTubes, true);
             // bridge
         } else if (currentFrame < AudioSync.songParts.CHORUS1.get()) {
+            // creates our nested circles
             pushMatrix();
             stroke(255);
+            // maps the current frame from bridge to chorus, and maps that to the screen width
             float circleMap = map(currentFrame, AudioSync.songParts.BRIDGE1.get(), AudioSync.songParts.CHORUS1.get(), 0,
                     width);
+            // this reverses the circle map so the circles collapse on eachother
             if (currentFrame > 4288737) {
                 circleMap = map(currentFrame, 4288737, AudioSync.songParts.CHORUS1.get(), width, 0);
             }
+            // increasesthe number of circles gradually -> limit should be 48 (depending on resolution - may add an upper limit (rendering this in 4k would lead to 384 circles lol)) 
             for (int i = 1; i < (int) (circleMap / 10); i++) {
+                // TODO: may update to tweedy HSB color converter to make this a nice looking gradient?
+                // we'll see!
                 fill((circleMap) % 255, (circleMap * i) % 255, (circleMap * (i + 1)) % 255);
                 circle(width / 2f, height / 2f, (circleMap / i) + (regLoop * i));
-
             }
             popMatrix();
-            // chorus
+            // chorus - BENS PART
         } else if (currentFrame < AudioSync.songParts.VERSE2.get()) {
 
         }
         if (wasBeat) {
             lastEvent = tempEvent;
 
-            // for(int i = 0; i < 4; i++){
-            // // ps.addParticle(new Coordinate(0, 10f * i, 0), new Coordinate(0.5f, 0, 5f),
-            // new Coordinate(5, 5, 5));
-            // // ps2.addParticle(new Coordinate(0, 10f * i, 0), new Coordinate(-0.5f, 0,
-            // 5f), new Coordinate(-5, 5, 5));
+            for(int i = 0; i < 4; i++){
+                ps.addParticle(new Coordinate(0, 10f * i, 0), new Coordinate(0.5f, 0, 5f),
+                new Coordinate(5, 5, 5));
+                ps2.addParticle(new Coordinate(0, 10f * i, 0), new Coordinate(-0.5f, 0,
+             5f), new Coordinate(-5, 5, 5));
 
-            // }
+            }
         }
-        wavey.update(wasBeat);
+        // wavey.update(wasBeat);
         ps.run();
         ps2.run();
         camera();
@@ -226,12 +237,12 @@ public class AidanTesting extends Scene {
     }
 
     public void keyPressed() {
-        if (key == 'n') {
-            debugger.doDebug = !debugger.doDebug;
-        }
-        if (key == 'p') {
-            jumpTo(lyricSync.lyricLL.peek().frame - 100);
-        }
+        // enables debugger
+        if (key == 'n') debugger.doDebug = !debugger.doDebug;
+        // allows to hop forward to next lyric
+        else if (key == 'p') jumpTo(lyricSync.lyricLL.peek().frame - 100);
+        // TODO: REMOVE AFTER TESTING
+        else if(key=='q') fov++;
     }
 
     public void jumpTo(int positionFrame) {
