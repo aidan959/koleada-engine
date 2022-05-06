@@ -6,6 +6,34 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch kamila2testing",
+            "request": "launch",
+            "mainClass": "ie.engine.testing.kamila2testing",
+            "projectName": "koleada-engine_92e642ef"
+        },
+        {
+            "type": "java",
+            "name": "Launch AidanTesting",
+            "request": "launch",
+            "mainClass": "ie.engine.testing.AidanTesting",
+            "projectName": "koleada-engine_92e642ef"
+        },
+        {
+            "type": "java",
+            "name": "Launch Kamilatesting",
+            "request": "launch",
+            "mainClass": "ie.engine.testing.Kamilatesting",
+            "projectName": "koleada-engine_92e642ef"
+        },
+        {
+            "type": "java",
+            "name": "Launch NewScene",
+            "request": "launch",
+            "mainClass": "ie.engine.testing.NewScene",
+            "projectName": "koleada-engine_92e642ef"
+        },
+        {
+            "type": "java",
             "name": "Launch AidanTesting",
             "request": "launch",
             "mainClass": "ie.engine.testing.AidanTesting",
