@@ -14,8 +14,8 @@ In this assignment I am most proud of my dancing cubes. They have probably taken
 
 -----
 
-Student Number = C20366426
-Student Name = Ben O'Brien
+Student Number: C20366426
+Student Name: Ben O'Brien
 ---
 For my visual portion of the assignment, I wanted to try creating a wave of colour which surrounded a particular shape, in this case, the shape being a sphere. I wanted to create a visual which would change based on a certain beat that would change the initial ring into a wave. The size of the sphere and the surrounding rings and waves ultimately changed based on the beat of the song.
 
@@ -24,7 +24,7 @@ This variable syncs the frame to each beat and therefore, was able to change the
 
 The visual also has mouse movements depending on where the cursor currently is. To do this, I used mouseX and mouseY in the camera function.
 
-# Part I am most of
+# Part I am most proud of
 In my personal opinion, I think the part I am most proud of is creating the visual of the wave. From initially creating a cube moving in a circular motion, I created a wave of cubes in a nested for loop which created the wave visual. I initially created it from trial and error, to try and create a visual in which I was pleased with.
 
 # How it works
