@@ -73,7 +73,7 @@ public class TweedyNS extends Scene{
             
             circlecol++; // increments to swap spheres' colours
 
-            System.out.println(currentFrame);
+            // System.out.println(currentFrame);
         } else {
             smoothBackground = lerp(0.8f,0, smoothBackground );
             
