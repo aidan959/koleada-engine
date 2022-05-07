@@ -11,7 +11,7 @@ import ie.engine.maths.Animation;
 import processing.core.PApplet;
 
 
-public class KamilaTesting extends Scene {
+public class Kamilatesting extends Scene {
 
     public void settings(){
         super.settings();
@@ -581,7 +581,7 @@ public class KamilaTesting extends Scene {
     }
     static String[] gameArgs = {"Main"};
     public static void main(String[] args){
-        PApplet.runSketch(gameArgs, new KamilaTesting());
+        PApplet.runSketch(gameArgs, new Kamilatesting());
     }
 }
 

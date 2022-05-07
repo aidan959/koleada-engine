@@ -25,6 +25,11 @@ public class AidanTesting extends Scene {
         audioSync = new AudioSync(this, songName);
         songInfo = new SongInfo(songName);
 
+        setupInstance();
+        audioSync.song.play();
+
+    }
+    public void setupInstance(){
         lastEvent = audioSync.songInfo.eventList.blank;
         lyricSync = new LyricSync(this, audioSync);
         ps = new ParticleSystem(new Coordinate(width, height), new Coordinate(1/4f,1/2f), this);
@@ -36,10 +41,7 @@ public class AidanTesting extends Scene {
         debugDictionary.put("bp", new DebugObject<>("bp.process()", 0, ""));
         debugDictionary.put("bp2", new DebugObject<>("bp.processSin()", 0, ""));
         debugDictionary.put("fov", new DebugObject<>("fov", 0, "°"));
-        audioSync.song.play();
-
     }
-    
     ParticleSystem ps;
     ParticleSystem ps2;
 

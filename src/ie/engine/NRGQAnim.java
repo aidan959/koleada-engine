@@ -13,7 +13,7 @@ import ie.engine.loading.SongInfo;
 import ie.engine.maths.*;
 import ie.engine.testing.AidanTesting;
 import ie.engine.testing.BenTesting;
-import ie.engine.testing.KamilaTesting;
+import ie.engine.testing.Kamilatesting;
 import ie.engine.testing.TweedyNS;
 
 
@@ -41,25 +41,25 @@ public class NRGQAnim extends Scene {
         menu.createMenuObject(Menu.MenuChoice.QUIT, "Quit Game", quitBtnCoord, buttonSize);
         menu.createMenuObject(Menu.MenuChoice.CREDITS, "Credits", creditBtnCoord, buttonSize);
 
-        benCode = new BenTesting();
-        tweedyCode = new TweedyNS();
-        aidanCode = new AidanTesting();
-        kamilaCode = new KamilaTesting();
-        benCode.g = g;
-        tweedyCode.g = g;
-        aidanCode.g = g;
-        kamilaCode.g = g;
-        benCode.setSurface(surface);
-        tweedyCode.setSurface(surface);
-        aidanCode.setSurface(surface);
-        kamilaCode.setSurface(surface);
-        aidanCode.platform = platform;
-
+    }
+    public void setupScene(Scene scene){
+        scene.setSurface(surface);
+        scene.g = g;
+        scene.audioSync = audioSync;
+        scene.songInfo = songInfo;
+        scene.debugDictionary = debugDictionary;
+        scene.debugger = debugger;
+        scene.bp = bp;
+    }
+    public void updateScene(Scene scene){
+        scene.width = width;
+        scene.height = height;
+        scene.frameCount = frameCount;
     }
     BenTesting benCode;
     TweedyNS tweedyCode;
     AidanTesting aidanCode;
-    KamilaTesting kamilaCode;
+    Kamilatesting kamilaCode;
     boolean benRan;
     boolean tweedyRan;
     boolean kamilaRan;
@@ -70,6 +70,7 @@ public class NRGQAnim extends Scene {
         super.setup();
 
         state = GameState.MENU;
+
     }
 
     // TODO check all things in here are being created and recycled before creation
@@ -80,9 +81,17 @@ public class NRGQAnim extends Scene {
     public void startAnim(){
         String songName = "assets/audio/songs/nrgq.wav";
         audioSync = new AudioSync(this, songName);
-        audioSync.play();
         songInfo = new SongInfo(songName);
         lastEvent = audioSync.songInfo.eventList.blank;
+        benCode = new BenTesting();
+        tweedyCode = new TweedyNS();
+        aidanCode = new AidanTesting();
+        kamilaCode = new Kamilatesting();
+        setupScene(benCode);
+        setupScene(tweedyCode);
+        setupScene(aidanCode);
+        setupScene(kamilaCode);
+        audioSync.play();
     }
     @Override
     public void draw() {
@@ -124,7 +133,7 @@ public class NRGQAnim extends Scene {
                 if(currentFrame < AudioSync.songParts.CHORUS1.get()){
                     if(!aidanRan){
                         aidanRan = true;
-
+                        aidanCode.setupInstance(); 
                     }
                     
                     pushMatrix();

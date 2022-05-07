@@ -32,15 +32,14 @@ public class Scene extends PApplet {
     }
     public void draw(){
         debugger.start();
-        currentFrame = audioSync.song.positionFrame();
+        if(audioSync != null)
+            currentFrame = audioSync.song.positionFrame();
         clear();
     }
     public void setSurface(PSurface surface){
         this.surface = surface;
     }
     public void setup(){
-        w = 480;
-        h = 480;
         frameRate(60);
         w = 480;
         h = 480;
@@ -56,8 +55,6 @@ public class Scene extends PApplet {
         debugDictionary.put("currentframe",new DebugObject<>("current frame", 0, "frame"));
         debugDictionary.put("lastframe",new DebugObject<>("last beat frame", 0, "frame"));
         debugDictionary.put("nextframe",new DebugObject<>("next beat frame", 0, "frame"));
-
-        
         debugger = new Debug(this, debugDictionary);
         bp = new BeatPulse(this);
     }
