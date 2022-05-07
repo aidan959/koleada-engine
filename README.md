@@ -1,6 +1,9 @@
 # koleada-engine
-A general platform for me to learn game design using Processing and through Java.
 
+# Project Description
+Our group OOP assignment to the song NRGQ by !!!.
+
+# Instructions
 When running this project, place [NRQG](https://drive.google.com/file/d/1dChgZ1jKWvXWGwkWOVHrGshIOEdF4ao0/view?usp=sharing) into the assets/songs/audio folder. 
 
 If the the nrgq.wav.anl file doesn't exist, make sure Python3 is installed and then run
@@ -8,6 +11,10 @@ If the the nrgq.wav.anl file doesn't exist, make sure Python3 is installed and t
 pip install aubio numpy
 
 These are the libraries used for beat detection. To run this code independant of the project, checkout the README in the songs folder.
+
+Also [here is a copy of my lib folder](https://drive.google.com/file/d/1e5zlKRoBxp9I9X_y2fmLJuYPG3kOZp-B/view?usp=sharing) - many of these libraries are not used anymore but we haven't had the time to clean it effectively.
+
+The project should be run from the Main file, located in src/ie/engine.
 
 Video Link
 https://youtu.be/4wFgNWSsPb8
