@@ -28,7 +28,9 @@ public class Kamilatesting extends Scene {
         audioSync.song.jumpFrame((int)AudioSync.songParts.BRIDGE1.get());
 
     }
-
+    public void setupInstance(){
+        lastEvent = audioSync.songInfo.eventList.blank;
+    }
     float lerpValue;
     Animation testAnimation;
     float smoothBackground;

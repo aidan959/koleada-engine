@@ -55,6 +55,12 @@ public class NRGQAnim extends Scene {
         scene.width = width;
         scene.height = height;
         scene.frameCount = frameCount;
+        pushMatrix();
+        pushStyle();
+        colorMode(RGB);
+        scene.draw();
+        popStyle();
+        popMatrix();
     }
     BenTesting benCode;
     TweedyNS tweedyCode;
@@ -87,16 +93,11 @@ public class NRGQAnim extends Scene {
         tweedyCode = new TweedyNS();
         aidanCode = new AidanTesting();
         kamilaCode = new Kamilatesting();
-        setupScene(benCode);
-        setupScene(tweedyCode);
-        setupScene(aidanCode);
-        setupScene(kamilaCode);
         audioSync.play();
     }
     @Override
     public void draw() {
         super.draw();
-        clear();
         switch (state) {
             case SPLASH:
                 break;
@@ -133,37 +134,37 @@ public class NRGQAnim extends Scene {
                 if(currentFrame < AudioSync.songParts.CHORUS1.get()){
                     if(!aidanRan){
                         aidanRan = true;
+                        setupScene(aidanCode);
                         aidanCode.setupInstance(); 
                     }
+                    updateScene(aidanCode);
+
+                } else if(currentFrame < AudioSync.songParts.BRIDGE1.get()){
+                    if(!benRan){
+                        benRan = true;
+                        setupScene(benCode);
+                        benCode.setupInstance(); 
+                        aidanCode = null;
+                    }
                     
-                    pushMatrix();
-                    pushStyle();
-                    colorMode(RGB);
-                    aidanCode.draw();
-                    popStyle();
-                    popMatrix();
-                } else if (currentFrame < AudioSync.songParts.BRIDGE1.get()){
-                    pushMatrix();
-                    pushStyle();
-                    colorMode(HSB);
-                    benCode.draw();
-                    popStyle();
-                    popMatrix();
-                } else if(currentFrame < AudioSync.songParts.BRIDGE2.get()){
-                    pushMatrix();
-                    pushStyle();
-                    kamilaCode.draw();
-                    popStyle();
+                    updateScene(benCode);
+                } else if (currentFrame < AudioSync.songParts.BRIDGE2.get()){
+                    if(!kamilaRan){
+                        kamilaRan = true;
+                        setupScene(kamilaCode);
+                        kamilaCode.setupInstance(); 
+                        benCode = null;
+                    }
+                    updateScene(kamilaCode);
 
-                    popMatrix();
                 } else {
-                    pushMatrix();
-                    pushStyle();
-
-                    tweedyCode.draw();
-                    popStyle();
-
-                    popMatrix();
+                    if(!tweedyRan){
+                        tweedyRan = true;
+                        setupScene(tweedyCode);
+                        tweedyCode.setupInstance(); 
+                        kamilaCode = null;
+                    }
+                    updateScene(tweedyCode);
                 }
                 
                 break;
@@ -172,5 +173,9 @@ public class NRGQAnim extends Scene {
                 break;
         }
 
+    }
+    public void keyPressed(){
+        super.keyPressed();
+        aidanCode.keyPressed();
     }
 }

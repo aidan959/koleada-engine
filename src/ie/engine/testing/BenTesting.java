@@ -3,12 +3,9 @@ package ie.engine.testing;
 
 import ie.engine.NRGQAnim;
 import ie.engine.Scene;
-import ie.engine.implementations.AudioEventLL.AudioEvent;
 import ie.engine.interaction.AudioSync;
 import ie.engine.loading.SongInfo;
 import ie.engine.maths.Animation;
-import ie.engine.maths.RGBColor;
-import ie.engine.objects.Waves;
 import processing.core.PApplet;
 
 public class BenTesting extends Scene{
@@ -25,8 +22,9 @@ public class BenTesting extends Scene{
         // bridge to chorus -- will start from chorus 1
         audioSync.song.jumpFrame((int)AudioSync.songParts.CHORUS1.get());
         colorMode(HSB);
-
-
+    }
+    public void setupInstance(){
+        lastEvent = audioSync.songInfo.eventList.blank; 
     }
 
     float lerpValue;

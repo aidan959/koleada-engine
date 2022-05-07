@@ -25,7 +25,9 @@ public class TweedyNS extends Scene{
         // bridge to chorus -- will start from bridge2
         audioSync.song.jumpFrame((int)AudioSync.songParts.BRIDGE2.get());
     }
-
+    public void setupInstance(){
+        lastEvent = audioSync.songInfo.eventList.blank;
+    }
     float lerpValue;
     Animation testAnimation;
     float smoothBackground;
