@@ -25,7 +25,7 @@ public class Kamilatesting extends Scene {
         songInfo = new SongInfo(songName);
         lastEvent = audioSync.songInfo.eventList.blank;
         // bridge to chorus -- will start from bridge1
-        audioSync.song.jumpFrame((int)AudioSync.songParts.BRIDGE1.get());
+        // audioSync.song.jumpFrame((int)AudioSync.songParts.BRIDGE1.get());
 
     }
     public void setupInstance(){
@@ -555,10 +555,6 @@ public class Kamilatesting extends Scene {
 
             }else if (currentFrame > 6007564 && currentFrame < 7507564){
                 sec4();
-            }
-
-            if (frameCount % 30 == 0){
-                System.out.println(audioSync.song.positionFrame());
             }
 
         }

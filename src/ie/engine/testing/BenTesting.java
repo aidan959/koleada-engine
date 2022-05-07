@@ -211,12 +211,6 @@ public class BenTesting extends Scene{
             popMatrix();
             */
 
-
-
-
-
-            System.out.println(currentFrame);
-
         } else {
              
             angle += 0.02f;

@@ -1,13 +1,5 @@
 package ie.engine;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import java.util.concurrent.*;
-
-import ie.engine.implementations.AudioEventLL;
-import ie.engine.implementations.PenroseLSystem;
-import ie.engine.implementations.Synchronization;
 import ie.engine.interaction.*;
 import ie.engine.loading.SongInfo;
 import ie.engine.maths.*;
@@ -134,14 +126,16 @@ public class NRGQAnim extends Scene {
                 if(currentFrame < AudioSync.songParts.CHORUS1.get()){
                     if(!aidanRan){
                         aidanRan = true;
+                        currentRunning = aidanCode;
                         setupScene(aidanCode);
                         aidanCode.setupInstance(); 
                     }
                     updateScene(aidanCode);
 
-                } else if(currentFrame < AudioSync.songParts.BRIDGE1.get()){
+                } else if(currentFrame < AudioSync.songParts.VERSE2.get()){
                     if(!benRan){
                         benRan = true;
+                        currentRunning = benCode;
                         setupScene(benCode);
                         benCode.setupInstance(); 
                         aidanCode = null;
@@ -151,6 +145,7 @@ public class NRGQAnim extends Scene {
                 } else if (currentFrame < AudioSync.songParts.BRIDGE2.get()){
                     if(!kamilaRan){
                         kamilaRan = true;
+                        currentRunning = kamilaCode;
                         setupScene(kamilaCode);
                         kamilaCode.setupInstance(); 
                         benCode = null;
@@ -160,6 +155,7 @@ public class NRGQAnim extends Scene {
                 } else {
                     if(!tweedyRan){
                         tweedyRan = true;
+                        currentRunning = tweedyCode;
                         setupScene(tweedyCode);
                         tweedyCode.setupInstance(); 
                         kamilaCode = null;
@@ -174,8 +170,23 @@ public class NRGQAnim extends Scene {
         }
 
     }
+    Scene currentRunning;
     public void keyPressed(){
         super.keyPressed();
-        aidanCode.keyPressed();
+        if(currentRunning == aidanCode)
+            updateKey(aidanCode);
+        else if(currentRunning == kamilaCode)
+            updateKey(kamilaCode);
+        else if(currentRunning == benCode)
+            updateKey(benCode);
+        else if(currentRunning == tweedyCode)
+            updateKey(tweedyCode);
+
+    }
+    public void updateKey(Scene scene){
+        scene.key = key;
+        scene.keyPressed = keyPressed;
+        scene.keyCode = keyCode;
+        scene.keyPressed(); 
     }
 }
