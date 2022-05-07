@@ -1,7 +1,7 @@
 # koleada-engine
 A general platform for me to learn game design using Processing and through Java.
 
-When running this project, place [NRQG]() into the assets/songs/audio folder. 
+When running this project, place [NRQG](https://drive.google.com/file/d/1dChgZ1jKWvXWGwkWOVHrGshIOEdF4ao0/view?usp=sharing) into the assets/songs/audio folder. 
 
 If the the nrgq.wav.anl file doesn't exist, make sure Python3 is installed and then run
 
